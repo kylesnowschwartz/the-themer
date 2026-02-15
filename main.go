@@ -5,9 +5,9 @@ import (
 	"os"
 
 	"github.com/kylesnowschwartz/the-themer/cmd"
-	// Import adapter packages here to register them via init().
-	// Phase 2+ will add lines like:
-	// _ "github.com/kylesnowschwartz/the-themer/adapter/ghostty"
+
+	// Adapter packages register themselves via init().
+	_ "github.com/kylesnowschwartz/the-themer/adapter/ghostty"
 )
 
 func main() {
