@@ -22,14 +22,17 @@ You start every session with amnesia. This file and `/load-dev` are your lifelin
 | `.claude/commands/load-dev.md` | Session bootstrap instructions (invoked by user via `/load-dev`) |
 | `CLAUDE.md` | This file. Static project knowledge. |
 
+@/Users/kyle/Code/dotfiles/ghostty/switch-theme.sh
+@/Users/kyle/Code/dotfiles/.bash_aliases
+
 ## Implementation Status
 
 | Phase | Status | Description |
 |-------|--------|-------------|
 | 1. Foundation | **Done** | Go module, palette parsing/defaults/validation, adapter interface, CLI skeleton, Justfile |
 | 2. Ghostty adapter | **Done** | Ghostty adapter, oracle test, per-adapter palette overrides, Colors() helper |
-| 3. Simple adapters | Not started | delta, bat, fzf -- all pure color-mapping, similar to ghostty |
-| 4. Neovim adapter | Not started | Lua colorscheme, complex color mapping |
+| 3. fzf + delta adapters | **Done** | fzf (zsh --color flags, per-adapter override), delta (gitconfig named feature) |
+| 4. bat + neovim adapters | Not started | bat (.tmTheme XML) + neovim (Lua colorscheme) -- both syntax colorschemes, shared `[palette.syntax]` design |
 | 5. Polish & ship | Not started | Presets support (starship etc.), switch-theme integration, error UX, README |
 
 ## Architecture
@@ -56,10 +59,18 @@ the-themer/
     ghostty/
       ghostty.go      # Ghostty adapter: text/template rendering, init() self-registration
       ghostty_test.go # Oracle test: byte-for-byte comparison against expected fixture
+    fzf/
+      fzf.go          # fzf adapter: zsh --color flags, per-adapter palette override
+      fzf_test.go     # Oracle test + registration test
+    delta/
+      delta.go        # delta adapter: gitconfig [delta "<name>"] section
+      delta_test.go   # Oracle test + registration test
   testdata/
-    bleu.toml         # Oracle fixture: bleu-theme's exact palette
+    bleu.toml         # Oracle fixture: bleu-theme's exact palette + fzf adapter override
     expected/
       ghostty/bleu    # Expected ghostty output for bleu palette
+      fzf/bleu.zsh    # Expected fzf output for bleu palette (with override)
+      delta/bleu.gitconfig  # Expected delta output for bleu palette
   main.go             # Entry point; adapter blank imports go here
   Justfile            # just check, just build, just generate
 ```
@@ -104,9 +115,9 @@ When optional fields are omitted, they derive from ANSI colors:
 ### MVP Target Apps (Adapters)
 
 1. ghostty -- **Done** (simplest -- nearly 1:1 palette mapping)
-2. delta (git pager -- gitconfig-style theme)
-3. bat (syntax highlighter -- .tmTheme XML)
-4. fzf (fuzzy finder -- shell export with --color flags)
+2. fzf -- **Done** (zsh --color flags, per-adapter override for fg/selection_bg/ui.border)
+3. delta -- **Done** (gitconfig named feature section, no override needed)
+4. bat (syntax highlighter -- .tmTheme XML, deferred to Phase 4 with neovim)
 5. neovim (Lua colorscheme with highlight groups -- most complex)
 
 ### Non-Adapter Apps (Presets)
