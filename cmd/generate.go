@@ -61,7 +61,20 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 	}
 
 	for _, a := range selected {
-		content, err := a.Generate(cfg)
+		// Use per-adapter palette override if present, otherwise use base config.
+		adapterCfg := cfg
+		if override, ok := cfg.Adapters[a.Name()]; ok {
+			adapterCfg = palette.Config{
+				Theme:   cfg.Theme,
+				Palette: override.Palette,
+			}
+			adapterCfg.ApplyDefaults()
+			if err := adapterCfg.Validate(); err != nil {
+				return fmt.Errorf("adapter %s override: %w", a.Name(), err)
+			}
+		}
+
+		content, err := a.Generate(adapterCfg)
 		if err != nil {
 			return fmt.Errorf("adapter %s: %w", a.Name(), err)
 		}
