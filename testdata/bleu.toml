@@ -1,0 +1,47 @@
+# Bleu theme palette - oracle fixture.
+# Colors extracted from the bleu-theme repo (https://github.com/bnema/bleu-theme).
+# This file encodes the exact palette that the-themer must reproduce
+# when generating bleu-theme output files.
+
+[theme]
+name = "bleu"
+author = "bnema"
+variant = "dark"
+
+[palette]
+bg = "#050a14"
+fg = "#e0ecf4"
+cursor = "#5588cc"
+selection_bg = "#2d4a6b"
+selection_fg = "#e0ecf4"
+
+# ANSI 16 colors
+color0 = "#050a14"   # black
+color1 = "#A167A5"   # red (soft purple in bleu)
+color2 = "#99FFE4"   # green
+color3 = "#FDBD85"   # yellow
+color4 = "#5588cc"   # blue
+color5 = "#87ceeb"   # magenta (sky blue in bleu)
+color6 = "#6bb6d6"   # cyan
+color7 = "#e0ecf4"   # white
+color8 = "#2d4a6b"   # bright black
+color9 = "#A167A5"   # bright red
+color10 = "#99FFE4"  # bright green
+color11 = "#FDBD85"  # bright yellow
+color12 = "#5588cc"  # bright blue
+color13 = "#87ceeb"  # bright magenta
+color14 = "#6bb6d6"  # bright cyan
+color15 = "#fefefe"  # bright white
+
+# Semantic overrides -- colors used for UI concepts that don't map 1:1 to ANSI slots.
+# Note: accent (#00d4ff) is a brighter cyan than ANSI cyan (#6bb6d6).
+# Note: error uses the ANSI "red" value (#A167A5) for ghostty/starship;
+#       neovim uses a different error color (#ff6b8a) handled in Phase 4.
+[palette.ui]
+border = "#2d4a6b"
+dimmed = "#708090"
+accent = "#00d4ff"
+success = "#99FFE4"
+warning = "#FDBD85"
+error = "#A167A5"
+info = "#87ceeb"
