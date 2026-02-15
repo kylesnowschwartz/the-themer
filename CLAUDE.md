@@ -28,9 +28,9 @@ You start every session with amnesia. This file and `/load-dev` are your lifelin
 |-------|--------|-------------|
 | 1. Foundation | **Done** | Go module, palette parsing/defaults/validation, adapter interface, CLI skeleton, Justfile |
 | 2. Ghostty adapter | **Done** | Ghostty adapter, oracle test, per-adapter palette overrides, Colors() helper |
-| 3. Starship adapter | Not started | TOML output with style strings |
+| 3. Simple adapters | Not started | delta, bat, fzf -- all pure color-mapping, similar to ghostty |
 | 4. Neovim adapter | Not started | Lua colorscheme, complex color mapping |
-| 5. Polish & ship | Not started | Output directory management, error UX, README |
+| 5. Polish & ship | Not started | Presets support (starship etc.), switch-theme integration, error UX, README |
 
 ## Architecture
 
@@ -82,8 +82,8 @@ One TOML file per theme. Adapter-specific palettes live in `[adapters.<name>.pal
 [palette]
 # ... base colors used by all adapters ...
 
-# Completely replaces [palette] for starship only
-[adapters.starship.palette]
+# Completely replaces [palette] for neovim only
+[adapters.neovim.palette]
 # ... must be a fully valid palette ...
 ```
 
@@ -101,11 +101,24 @@ When optional fields are omitted, they derive from ANSI colors:
 | | | ui.error | color1 |
 | | | ui.info | color4 |
 
-### MVP Target Apps
+### MVP Target Apps (Adapters)
 
-1. ghostty (simplest -- nearly 1:1 palette mapping)
-2. starship (TOML with color refs in style strings)
-3. neovim (Lua colorscheme with highlight groups)
+1. ghostty -- **Done** (simplest -- nearly 1:1 palette mapping)
+2. delta (git pager -- gitconfig-style theme)
+3. bat (syntax highlighter -- .tmTheme XML)
+4. fzf (fuzzy finder -- shell export with --color flags)
+5. neovim (Lua colorscheme with highlight groups -- most complex)
+
+### Non-Adapter Apps (Presets)
+
+Starship configs vary in structure per prompt style, not just colors. Instead of generating from a template, the TOML references an existing config by name:
+
+```toml
+[presets]
+starship = "chef"   # symlink target from user's starship collection
+```
+
+Integration with `switch-theme.sh` handles the symlink. Deferred to Phase 5.
 
 ### Known Color Divergences
 
