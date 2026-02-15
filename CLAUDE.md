@@ -21,23 +21,58 @@ You start every session with amnesia. This file and `/load-dev` are your lifelin
 | `.claude/commands/load-dev.md` | Session bootstrap instructions (invoked by user via `/load-dev`) |
 | `CLAUDE.md` | This file. Static project knowledge. |
 
-## Architecture (Planned -- not yet implemented)
+## Architecture
 
-- **Language**: Go
-- **CLI framework**: TBD (cobra or similar)
-- **Template engine**: Go `text/template`
-- **Input**: TOML file with flat 16-color ANSI palette + bg/fg/cursor/selection + optional semantic overrides
+- **Language**: Go 1.25
+- **CLI framework**: spf13/cobra
+- **TOML parsing**: BurntSushi/toml
+- **Template engine**: Go `text/template` (used by adapters, not yet implemented)
+- **Input**: TOML file with flat 16-color ANSI palette + bg/fg/cursor/selection + optional `[palette.ui]` semantic overrides
 - **Output**: `{theme-name}-theme/` directory with subdirectories per app
+
+### Project Layout
+
+```
+the-themer/
+  cmd/
+    root.go           # Cobra root command
+    generate.go       # generate subcommand: parse -> defaults -> validate -> generate
+  palette/
+    palette.go        # Config, Theme, PaletteColors, UI structs; Load/Parse/ApplyDefaults/Validate
+    palette_test.go   # 8 tests: parsing, defaults, validation, error accumulation
+  adapter/
+    adapter.go        # Adapter interface + slice-based registry (Register, All, ByName)
+  testdata/
+    bleu.toml         # Oracle fixture: bleu-theme's exact palette
+  main.go             # Entry point; adapter imports go here
+  Justfile            # just check, just build, just generate
+```
 
 ### Adapter Pattern
 
-Each app adapter is a self-contained unit that:
-1. Receives a canonical `Palette` struct
-2. Knows its output directory name and filename
-3. Renders its config via Go template
-4. Can be registered/deregistered from the generator
+Each app adapter implements `adapter.Adapter`:
+- `Name() string` -- identifier (e.g., "ghostty")
+- `DirName() string` -- output subdirectory
+- `FileName(themeName string) string` -- output filename
+- `Generate(cfg palette.Config) ([]byte, error)` -- render themed config
 
-### MVP Target Apps
+Adapters self-register via `init()`. Adding/removing an adapter = adding/removing a blank import in `main.go`.
+
+### Palette Defaults
+
+When optional fields are omitted, they derive from ANSI colors:
+
+| Field | Default | Field | Default |
+|-------|---------|-------|---------|
+| cursor | color4 | ui.border | color8 |
+| selection_bg | color8 | ui.dimmed | color8 |
+| selection_fg | fg | ui.accent | color6 |
+| | | ui.success | color2 |
+| | | ui.warning | color3 |
+| | | ui.error | color1 |
+| | | ui.info | color4 |
+
+### MVP Target Apps (not yet implemented)
 
 1. ghostty (simplest -- nearly 1:1 palette mapping)
 2. starship (TOML with color refs in style strings)
@@ -52,15 +87,13 @@ Each app adapter is a self-contained unit that:
 ## Build & Test
 
 ```bash
-# Build (once Go code exists)
-go build ./...
+just check              # go vet + go test -v
+just build              # go build -o the-themer .
+just generate <file>    # go run . generate --input <file>
 
-# Test
-go test ./...
-
-# Oracle test: generate bleu theme and diff against reference
+# Oracle test (once adapters exist):
 # the-themer generate --input testdata/bleu.toml --output /tmp/bleu-test/
-# diff /tmp/bleu-test/ghostty/bleu /path/to/bleu-theme/ghostty/bleu
+# diff /tmp/bleu-test/ghostty/bleu .cloned-sources/bleu-theme/ghostty/bleu
 ```
 
 ## Conventions
@@ -69,3 +102,4 @@ go test ./...
 - One adapter per PR when expanding app support
 - Copy bleu-theme file structure literally into templates, then parameterize
 - Validate input completely before writing any output files
+- Table-driven tests, ordered validation slices for deterministic output
