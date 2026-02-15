@@ -380,6 +380,110 @@ func TestParseInvalidTOML(t *testing.T) {
 	}
 }
 
+func TestColors(t *testing.T) {
+	cfg, err := palette.Load("../testdata/bleu.toml")
+	if err != nil {
+		t.Fatalf("Load failed: %v", err)
+	}
+
+	colors := cfg.Palette.Colors()
+
+	if len(colors) != 16 {
+		t.Fatalf("Colors() returned %d values, want 16", len(colors))
+	}
+
+	// Verify order matches individual fields
+	want := []string{
+		cfg.Palette.Color0, cfg.Palette.Color1, cfg.Palette.Color2, cfg.Palette.Color3,
+		cfg.Palette.Color4, cfg.Palette.Color5, cfg.Palette.Color6, cfg.Palette.Color7,
+		cfg.Palette.Color8, cfg.Palette.Color9, cfg.Palette.Color10, cfg.Palette.Color11,
+		cfg.Palette.Color12, cfg.Palette.Color13, cfg.Palette.Color14, cfg.Palette.Color15,
+	}
+
+	for i, got := range colors {
+		if got != want[i] {
+			t.Errorf("Colors()[%d] = %q, want %q", i, got, want[i])
+		}
+	}
+}
+
+func TestParseAdapterOverride(t *testing.T) {
+	tomlStr := `
+[theme]
+name = "test"
+
+[palette]
+bg = "#111111"
+fg = "#eeeeee"
+color0 = "#000000"
+color1 = "#aa0000"
+color2 = "#00aa00"
+color3 = "#aaaa00"
+color4 = "#0000aa"
+color5 = "#aa00aa"
+color6 = "#00aaaa"
+color7 = "#aaaaaa"
+color8 = "#555555"
+color9 = "#ff0000"
+color10 = "#00ff00"
+color11 = "#ffff00"
+color12 = "#0000ff"
+color13 = "#ff00ff"
+color14 = "#00ffff"
+color15 = "#ffffff"
+
+[adapters.ghostty.palette]
+bg = "#222222"
+fg = "#dddddd"
+color0 = "#111111"
+color1 = "#bb0000"
+color2 = "#00bb00"
+color3 = "#bbbb00"
+color4 = "#0000bb"
+color5 = "#bb00bb"
+color6 = "#00bbbb"
+color7 = "#bbbbbb"
+color8 = "#666666"
+color9 = "#ee0000"
+color10 = "#00ee00"
+color11 = "#eeee00"
+color12 = "#0000ee"
+color13 = "#ee00ee"
+color14 = "#00eeee"
+color15 = "#eeeeee"
+`
+
+	cfg, err := palette.Parse([]byte(tomlStr))
+	if err != nil {
+		t.Fatalf("Parse failed: %v", err)
+	}
+
+	// Base palette is unaffected
+	assertEqual(t, "base bg", cfg.Palette.BG, "#111111")
+
+	// Adapter override parsed correctly
+	ghostty, ok := cfg.Adapters["ghostty"]
+	if !ok {
+		t.Fatal("expected adapters.ghostty to exist")
+	}
+	assertEqual(t, "ghostty bg", ghostty.Palette.BG, "#222222")
+	assertEqual(t, "ghostty fg", ghostty.Palette.FG, "#dddddd")
+	assertEqual(t, "ghostty color0", ghostty.Palette.Color0, "#111111")
+	assertEqual(t, "ghostty color15", ghostty.Palette.Color15, "#eeeeee")
+
+	// Override palette can go through defaults + validate
+	overrideCfg := palette.Config{
+		Theme:   cfg.Theme,
+		Palette: ghostty.Palette,
+	}
+	overrideCfg.ApplyDefaults()
+	if err := overrideCfg.Validate(); err != nil {
+		t.Fatalf("override validation failed: %v", err)
+	}
+	// Defaults applied to override palette
+	assertEqual(t, "override cursor", overrideCfg.Palette.Cursor, "#0000bb") // color4
+}
+
 // assertEqual is a test helper that reports field mismatches.
 func assertEqual(t *testing.T, field, got, want string) {
 	t.Helper()

@@ -61,11 +61,30 @@ type PaletteColors struct {
 	UI UI `toml:"ui"`
 }
 
+// Colors returns the 16 ANSI colors in index order (color0..color15).
+// This enables clean iteration in templates.
+func (p PaletteColors) Colors() []string {
+	return []string{
+		p.Color0, p.Color1, p.Color2, p.Color3,
+		p.Color4, p.Color5, p.Color6, p.Color7,
+		p.Color8, p.Color9, p.Color10, p.Color11,
+		p.Color12, p.Color13, p.Color14, p.Color15,
+	}
+}
+
+// AdapterConfig holds per-adapter palette overrides from [adapters.<name>].
+// When present, the override palette completely replaces the base palette
+// for that adapter -- no merging, no cascading.
+type AdapterConfig struct {
+	Palette PaletteColors `toml:"palette"`
+}
+
 // Config is the top-level TOML deserialization target.
 // Every adapter receives this as its input.
 type Config struct {
-	Theme   Theme         `toml:"theme"`
-	Palette PaletteColors `toml:"palette"`
+	Theme    Theme                    `toml:"theme"`
+	Palette  PaletteColors            `toml:"palette"`
+	Adapters map[string]AdapterConfig `toml:"adapters"`
 }
 
 // ValidationErrors collects multiple validation failures.
