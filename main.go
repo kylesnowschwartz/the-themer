@@ -7,6 +7,8 @@ import (
 	"github.com/kylesnowschwartz/the-themer/cmd"
 
 	// Adapter packages register themselves via init().
+	_ "github.com/kylesnowschwartz/the-themer/adapter/delta"
+	_ "github.com/kylesnowschwartz/the-themer/adapter/fzf"
 	_ "github.com/kylesnowschwartz/the-themer/adapter/ghostty"
 )
 

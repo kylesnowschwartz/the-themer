@@ -45,3 +45,32 @@ success = "#99FFE4"
 warning = "#FDBD85"
 error = "#A167A5"
 info = "#87ceeb"
+
+# fzf uses a slightly warmer foreground and darker selection/borders.
+# Override completely replaces [palette] for fzf -- no merging.
+[adapters.fzf.palette]
+bg = "#050a14"
+fg = "#e8f4f8"
+color0 = "#050a14"
+color1 = "#A167A5"
+color2 = "#99FFE4"
+color3 = "#FDBD85"
+color4 = "#5588cc"
+color5 = "#87ceeb"
+color6 = "#6bb6d6"
+color7 = "#e0ecf4"
+color8 = "#2d4a6b"
+color9 = "#A167A5"
+color10 = "#99FFE4"
+color11 = "#FDBD85"
+color12 = "#5588cc"
+color13 = "#87ceeb"
+color14 = "#6bb6d6"
+color15 = "#fefefe"
+selection_bg = "#0f1520"
+
+[adapters.fzf.palette.ui]
+border = "#070c16"
+dimmed = "#708090"
+accent = "#00d4ff"
+info = "#87ceeb"
