@@ -46,6 +46,15 @@ warning = "#FDBD85"
 error = "#A167A5"
 info = "#87ceeb"
 
+# Syntax highlighting overrides for bat/neovim.
+# These colors are specific to code rendering and differ from ANSI/UI colors.
+# Number/constant uses a muted blue distinct from the brighter Color4.
+# Error uses a warm pink distinct from the purple-tinted Color1/UI.Error.
+[palette.syntax]
+number = "#4a7ba7"
+error = "#ff6b8a"
+line_highlight = "#0a1018"
+
 # fzf uses a slightly warmer foreground and darker selection/borders.
 # Override completely replaces [palette] for fzf -- no merging.
 [adapters.fzf.palette]

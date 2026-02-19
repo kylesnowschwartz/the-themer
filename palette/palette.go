@@ -33,6 +33,17 @@ type UI struct {
 	Info    string `toml:"info"`
 }
 
+// Syntax holds colors for syntax highlighting used by bat (.tmTheme) and
+// potentially neovim. These are distinct from UI colors because syntax
+// highlighters need different shades than app chrome -- e.g., a muted blue
+// for numeric literals vs. the bright accent for keywords.
+// When omitted, these are derived from ANSI palette colors via ApplyDefaults.
+type Syntax struct {
+	Number        string `toml:"number"`         // numeric literals and constants
+	Error         string `toml:"error"`          // invalid/error tokens (distinct from ui.error)
+	LineHighlight string `toml:"line_highlight"` // current line background tint
+}
+
 // PaletteColors holds the full color palette from the [palette] TOML section.
 type PaletteColors struct {
 	BG          string `toml:"bg"`
@@ -58,7 +69,8 @@ type PaletteColors struct {
 	Color14 string `toml:"color14"`
 	Color15 string `toml:"color15"`
 
-	UI UI `toml:"ui"`
+	UI     UI     `toml:"ui"`
+	Syntax Syntax `toml:"syntax"`
 }
 
 // Colors returns the 16 ANSI colors in index order (color0..color15).
@@ -164,6 +176,17 @@ func (c *Config) ApplyDefaults() {
 	if p.UI.Info == "" {
 		p.UI.Info = p.Color4
 	}
+
+	// Syntax defaults derived from ANSI colors
+	if p.Syntax.Number == "" {
+		p.Syntax.Number = p.Color4
+	}
+	if p.Syntax.Error == "" {
+		p.Syntax.Error = p.Color1
+	}
+	if p.Syntax.LineHighlight == "" {
+		p.Syntax.LineHighlight = p.SelectionBG
+	}
 }
 
 // Validate checks that all required fields are present and all hex colors
@@ -226,6 +249,9 @@ func (c *Config) Validate() error {
 		{"palette.ui.warning", c.Palette.UI.Warning},
 		{"palette.ui.error", c.Palette.UI.Error},
 		{"palette.ui.info", c.Palette.UI.Info},
+		{"palette.syntax.number", c.Palette.Syntax.Number},
+		{"palette.syntax.error", c.Palette.Syntax.Error},
+		{"palette.syntax.line_highlight", c.Palette.Syntax.LineHighlight},
 	}
 
 	for _, f := range optionalHex {
