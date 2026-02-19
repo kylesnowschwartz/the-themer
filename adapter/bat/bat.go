@@ -34,8 +34,11 @@ func titleCase(s string) string {
 	if s == "" {
 		return s
 	}
-	// Capitalize first byte; works for ASCII theme names.
-	return string(s[0]-32) + s[1:]
+	r := []rune(s)
+	if r[0] >= 'a' && r[0] <= 'z' {
+		r[0] -= 32
+	}
+	return string(r)
 }
 
 // batTmpl renders a TextMate .tmTheme XML file from the palette.
