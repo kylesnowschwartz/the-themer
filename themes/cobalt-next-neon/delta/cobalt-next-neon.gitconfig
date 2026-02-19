@@ -1,0 +1,22 @@
+; cobalt-next-neon theme for delta
+; Add to .gitconfig or include via [include] path = <this-file>
+[delta "cobalt-next-neon"]
+	light = false
+	syntax-theme = Nord
+	navigate = true
+	keep-plus-minus-markers = true
+	file-decoration-style = "none"
+	file-style = "#8ff586 bold"
+	minus-style = "#ff2320"
+	minus-emph-style = "#ff2320 bold"
+	plus-style = "#3ba5ff"
+	plus-emph-style = "#3ba5ff bold"
+	hunk-header-style = "#8ff586 bold"
+	line-numbers = true
+	line-numbers-minus-style = "#ff2320"
+	line-numbers-plus-style = "#3ba5ff"
+	line-numbers-left-style = "#fff688"
+	line-numbers-right-style = "#fff688"
+	line-numbers-zero-style = "#fff688"
+	zero-style = "syntax"
+	whitespace-error-style = "reverse #781aa0"

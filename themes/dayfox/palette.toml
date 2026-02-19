@@ -1,0 +1,40 @@
+# Dayfox palette
+# A warm light theme from the nightfox.nvim family.
+# Source: extracted from ghostty/themes/dayfox.ghostty
+# Upstream: https://github.com/edeneast/nightfox.nvim
+
+[theme]
+name = "dayfox"
+variant = "light"
+
+[palette]
+bg = "#f6f2ee"
+fg = "#3d2b5a"
+cursor = "#3d2b5a"
+selection_bg = "#e7d2be"
+selection_fg = "#3d2b5a"
+
+# ANSI 16 colors (normal)
+color0 = "#352c24"   # black
+color1 = "#a5222f"   # red
+color2 = "#396847"   # green
+color3 = "#ac5402"   # yellow (orange-tinted)
+color4 = "#2848a9"   # blue
+color5 = "#6e33ce"   # magenta (purple)
+color6 = "#287980"   # cyan (teal)
+color7 = "#f2e9e1"   # white (warm cream)
+
+# ANSI 16 colors (bright)
+color8 = "#534c45"   # bright black (warm grey)
+color9 = "#b3434e"   # bright red
+color10 = "#577f63"  # bright green
+color11 = "#b86e28"  # bright yellow
+color12 = "#4863b6"  # bright blue
+color13 = "#8452d5"  # bright magenta
+color14 = "#488d93"  # bright cyan
+color15 = "#f4ece6"  # bright white
+
+[references]
+neovim = "dayfox"
+claude = "light"
+bat = "Solarized (light)"

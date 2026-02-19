@@ -1,0 +1,37 @@
+# Cobalt Next Neon palette
+# A vivid dark theme with neon greens, electric blues, and warm yellows.
+# Source: extracted from ghostty/themes/cobalt-next-neon.ghostty
+
+[theme]
+name = "cobalt-next-neon"
+variant = "dark"
+
+[palette]
+bg = "#142838"
+fg = "#8ff586"
+cursor = "#c4206f"
+selection_bg = "#094fb1"
+selection_fg = "#8ff586"
+
+# ANSI 16 colors
+color0 = "#142631"   # black (near-bg)
+color1 = "#ff2320"   # red
+color2 = "#3ba5ff"   # green (blue-tinted in this scheme)
+color3 = "#e9e75c"   # yellow
+color4 = "#8ff586"   # blue (green in this scheme — matches fg)
+color5 = "#781aa0"   # magenta (purple)
+color6 = "#8ff586"   # cyan (green — matches fg)
+color7 = "#ba46b2"   # white (magenta-tinted)
+color8 = "#fff688"   # bright black (bright yellow)
+color9 = "#d4312e"   # bright red
+color10 = "#8ff586"  # bright green
+color11 = "#e9f06d"  # bright yellow
+color12 = "#3c7dd2"  # bright blue
+color13 = "#8230a7"  # bright magenta
+color14 = "#6cbc67"  # bright cyan (muted green)
+color15 = "#8ff586"  # bright white (green — matches fg)
+
+[references]
+neovim = "cobalt-neon"
+claude = "dark"
+bat = "Dracula"

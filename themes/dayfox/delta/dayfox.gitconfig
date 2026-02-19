@@ -1,0 +1,22 @@
+; dayfox theme for delta
+; Add to .gitconfig or include via [include] path = <this-file>
+[delta "dayfox"]
+	light = true
+	syntax-theme = Nord
+	navigate = true
+	keep-plus-minus-markers = true
+	file-decoration-style = "none"
+	file-style = "#2848a9 bold"
+	minus-style = "#a5222f"
+	minus-emph-style = "#a5222f bold"
+	plus-style = "#396847"
+	plus-emph-style = "#396847 bold"
+	hunk-header-style = "#287980 bold"
+	line-numbers = true
+	line-numbers-minus-style = "#a5222f"
+	line-numbers-plus-style = "#396847"
+	line-numbers-left-style = "#534c45"
+	line-numbers-right-style = "#534c45"
+	line-numbers-zero-style = "#534c45"
+	zero-style = "syntax"
+	whitespace-error-style = "reverse #6e33ce"
