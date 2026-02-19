@@ -94,9 +94,10 @@ type AdapterConfig struct {
 // Config is the top-level TOML deserialization target.
 // Every adapter receives this as its input.
 type Config struct {
-	Theme    Theme                    `toml:"theme"`
-	Palette  PaletteColors            `toml:"palette"`
-	Adapters map[string]AdapterConfig `toml:"adapters"`
+	Theme      Theme                    `toml:"theme"`
+	Palette    PaletteColors            `toml:"palette"`
+	Adapters   map[string]AdapterConfig `toml:"adapters"`
+	References map[string]string        `toml:"references"`
 }
 
 // ValidationErrors collects multiple validation failures.

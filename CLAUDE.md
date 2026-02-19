@@ -31,7 +31,7 @@ You start every session with amnesia. This file and `/load-dev` are your lifelin
 | 2. Ghostty adapter | **Done** | Ghostty adapter, oracle test, per-adapter palette overrides, Colors() helper |
 | 3. fzf + delta adapters | **Done** | fzf (zsh --color flags, per-adapter override), delta (gitconfig named feature) |
 | 4. Theme warehouse structure | **Done** | themes/ directory, palette TOMLs, bat adapter with [palette.syntax], generated + hand-crafted configs |
-| 5. Install + Switch commands | Not started | `install` deploys to filesystem, `switch` replaces switch-theme.sh |
+| 5. Install + Switch commands | **Done** | `install` deploys to filesystem, `switch` activates theme across apps, theme/ package |
 | 6. Polish & ship | Not started | Error UX, additional adapters, README |
 
 ## Architecture
@@ -113,8 +113,10 @@ the-themer/
   cmd/
     root.go           # Cobra root command
     generate.go       # generate subcommand: parse -> defaults -> validate -> generate
+    install.go        # install subcommand: deploy theme configs to filesystem
+    switch.go         # switch subcommand: activate theme across all apps
   palette/
-    palette.go        # Config, Theme, PaletteColors, UI, AdapterConfig; Load/Parse/ApplyDefaults/Validate/Colors
+    palette.go        # Config, Theme, PaletteColors, UI, AdapterConfig, References; Load/Parse/ApplyDefaults/Validate/Colors
     palette_test.go   # 10 tests: parsing, defaults, validation, Colors(), adapter overrides
   adapter/
     adapter.go        # Adapter interface + slice-based registry (Register, All, ByName)
@@ -130,6 +132,12 @@ the-themer/
     delta/
       delta.go        # delta adapter: gitconfig [delta "<name>"] section
       delta_test.go   # Oracle test + registration test
+  theme/
+    theme.go          # Theme type, LoadTheme, ListThemes, AppDirs
+    install.go        # Install() with per-app handlers (ghostty, bat, delta, fzf, starship, eza, gh-dash)
+    switch.go         # Switch() with per-app handlers (+ neovim via Themery, claude.json edit)
+    state.go          # ReadState/WriteState for ~/.config/the-themer/current
+    theme_test.go     # 15 integration tests: install, switch, state, references, titleCase
   themes/               # Theme warehouse
     cobalt-next-neon/   # Dark theme: palette + ghostty/fzf/delta/bat + starship/gh-dash
     dayfox/             # Light theme: palette + ghostty/fzf/delta/bat + starship/gh-dash
@@ -186,23 +194,37 @@ When optional fields are omitted, they derive from ANSI colors:
 
 ```
 the-themer generate --input themes/cobalt-next-neon/palette.toml --output themes/cobalt-next-neon/
-the-themer install cobalt-next-neon        # deploy to filesystem (Phase 5)
-the-themer switch cobalt-next-neon         # change active theme (Phase 5)
+the-themer install cobalt-next-neon --themes-dir ./themes/   # deploy configs to filesystem
+the-themer switch cobalt-next-neon --themes-dir ./themes/    # activate theme across all apps
 ```
 
-### App Switching Mechanisms (for install/switch)
+### Install Destinations
 
-| App | Mechanism | Config Location |
-|-----|-----------|-----------------|
-| Ghostty | File-write to theme.local | `~/.config/ghostty/theme.local` |
-| Starship | Symlink swap | `~/.config/starship.toml` |
-| Delta | Write name to txt file | `~/.config/delta-theme.txt` (read by git() wrapper) |
-| bat | Write name to txt file | `~/.config/bat-theme.txt` (read by bat() wrapper) |
-| eza | Symlink swap | `~/.config/eza/theme.yml` |
-| fzf | Source shell script | Shell rc sourcing |
-| gh-dash | File copy | `~/.config/gh-dash/config.yml` |
-| Neovim | Headless nvim + Themery | Themery persistence file |
-| Claude CLI | jq edit | `~/.claude.json` .theme key |
+| App | Install Location |
+|-----|-----------------|
+| Ghostty | `~/.config/ghostty/themes/` |
+| bat | `$(bat --config-dir)/themes/` + cache rebuild |
+| Delta | `~/.config/the-themer/delta/` + git include.path |
+| fzf | `~/.config/the-themer/fzf/` |
+| Starship | `~/.config/the-themer/starship/` |
+| eza | `~/.config/eza/themes/` |
+| gh-dash | `~/.config/the-themer/gh-dash/` |
+
+### Switch Mechanisms
+
+| App | Trigger | Switch Action |
+|-----|---------|---------------|
+| Ghostty | `ghostty/` dir exists | Write `~/.config/ghostty/theme.local` |
+| bat | `bat/` dir or `references.bat` | Write theme name to `~/.config/bat-theme.txt` |
+| Delta | `delta/` dir or `references.delta` | Write feature name to `~/.config/delta-theme.txt` |
+| fzf | `fzf/` dir exists | Symlink `~/.config/the-themer/fzf/current.zsh` |
+| Starship | `starship/` dir exists | Symlink `~/.config/starship.toml` |
+| eza | `eza/` dir exists | Symlink `~/.config/eza/theme.yml` |
+| gh-dash | `gh-dash/` dir exists | Copy to `~/.config/gh-dash/config.yml` |
+| Neovim | `references.neovim` set | Headless nvim + Themery |
+| Claude CLI | `references.claude` set | Pure Go edit of `~/.claude.json` |
+
+Active theme state recorded at `~/.config/the-themer/current`.
 
 ### Reference Material
 
