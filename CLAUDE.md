@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A Go CLI tool that takes a TOML color palette and generates a meta-theme directory with per-app config files. A white-label theme factory -- one palette in, themed configs for ghostty, neovim, starship, etc. out.
+A Go CLI tool and central warehouse for terminal environment theming. One repo holds all theme definitions — palettes, generated configs, hand-crafted configs, and external references. Three commands: `generate` (palette → per-app configs), `install` (deploy to filesystem), `switch` (change active theme across all apps, replacing switch-theme.sh).
 
 ## Development Process
 
@@ -17,13 +17,11 @@ You start every session with amnesia. This file and `/load-dev` are your lifelin
 
 | File | Purpose |
 |------|---------|
-| `.agent-history/context-packet-20260215.md` | Full project specification, goals, oracle, risks |
-| `.agent-history/phase-{1..5}-*.md` | Per-phase implementation plans |
+| `.agent-history/context-packet-20260215.md` | Original project specification (palette-generator era) |
+| `.agent-history/theme-switching-architecture.md` | How Kyle's multi-app theme switching works today |
+| `.agent-history/nelson/pivot-to-theme-warehouse/` | Research from the warehouse pivot (scout reports, synthesis) |
 | `.claude/commands/load-dev.md` | Session bootstrap instructions (invoked by user via `/load-dev`) |
 | `CLAUDE.md` | This file. Static project knowledge. |
-
-@/Users/kyle/Code/dotfiles/ghostty/switch-theme.sh
-@/Users/kyle/Code/dotfiles/.bash_aliases
 
 ## Implementation Status
 
@@ -32,17 +30,81 @@ You start every session with amnesia. This file and `/load-dev` are your lifelin
 | 1. Foundation | **Done** | Go module, palette parsing/defaults/validation, adapter interface, CLI skeleton, Justfile |
 | 2. Ghostty adapter | **Done** | Ghostty adapter, oracle test, per-adapter palette overrides, Colors() helper |
 | 3. fzf + delta adapters | **Done** | fzf (zsh --color flags, per-adapter override), delta (gitconfig named feature) |
-| 4. bat + neovim adapters | Not started | bat (.tmTheme XML) + neovim (Lua colorscheme) -- both syntax colorschemes, shared `[palette.syntax]` design |
-| 5. Polish & ship | Not started | Presets support (starship etc.), switch-theme integration, error UX, README |
+| 4. Theme warehouse structure | **Done** | themes/ directory, palette TOMLs, bat adapter with [palette.syntax], generated + hand-crafted configs |
+| 5. Install + Switch commands | Not started | `install` deploys to filesystem, `switch` replaces switch-theme.sh |
+| 6. Polish & ship | Not started | Error UX, additional adapters, README |
 
 ## Architecture
 
 - **Language**: Go 1.25
 - **CLI framework**: spf13/cobra
 - **TOML parsing**: BurntSushi/toml
-- **Template engine**: Go `text/template` (used by adapters)
-- **Input**: TOML file with flat 16-color ANSI palette + bg/fg/cursor/selection + optional `[palette.ui]` semantic overrides
-- **Output**: `{theme-name}-theme/` directory with subdirectories per app
+- **Template engine**: Go `text/template` (used by generated adapters)
+
+### The Three-Category Model
+
+Apps fall into three categories based on how the-themer handles their configs:
+
+1. **Generated** — Config derived from palette via template. Ghostty, fzf, delta, bat.
+2. **Hand-crafted** — Config lives in the themes/ directory, checked into the repo. Starship, eza, gh-dash. Too structural to auto-derive from colors alone.
+3. **Referenced** — External thing the-themer just knows the name of. Neovim colorschemes (standalone plugin repos like cobalt-neon.nvim), claude-cli ("dark"/"light").
+
+### Theme Directory Structure
+
+Convention over configuration. A theme is a directory. Its structure IS the manifest.
+
+```
+themes/
+  cobalt-next-neon/
+    palette.toml                       # Colors + metadata + references
+    ghostty/cobalt-next-neon.ghostty   # Generated from palette
+    fzf/cobalt-next-neon.zsh           # Generated from palette
+    delta/cobalt-next-neon.gitconfig    # Generated from palette
+    starship/chef-starship.toml        # Hand-crafted, checked in
+    gh-dash/cobalt2.yml                # Hand-crafted, checked in
+  dayfox/
+    palette.toml
+    ghostty/dayfox.ghostty
+    fzf/dayfox.zsh
+    delta/dayfox.gitconfig
+    starship/chef-light-starship.toml
+    gh-dash/dayfox.yml
+```
+
+Convention: `themes/<name>/<app>/` exists → this theme has configs for that app. No separate manifest file.
+
+### palette.toml Format
+
+```toml
+[theme]
+name = "cobalt-next-neon"
+variant = "dark"
+
+[palette]
+bg = "#122738"
+fg = "#e0ecf4"
+# ... ANSI 16 + cursor/selection ...
+
+[palette.ui]
+# Semantic overrides beyond ANSI slots
+accent = "#00d4ff"
+# ...
+
+[references]
+neovim = "cobalt-neon"      # colorscheme name for Themery
+claude = "dark"              # claude.json theme value
+
+[adapters.fzf.palette]
+# Per-adapter palette override (completely replaces [palette] for fzf)
+```
+
+### Working Themes
+
+| Theme | Variant | Neovim | Starship | Usage |
+|-------|---------|--------|----------|-------|
+| cobalt-next-neon | dark | cobalt-neon (plugin repo) | chef | Primary daily driver |
+| dayfox | light | dayfox (nightfox.nvim) | chef-light | Light mode |
+| bleu | dark | bleu | bleu | Reference only (from meta-terminal/bleu-theme) |
 
 ### Project Layout
 
@@ -62,14 +124,21 @@ the-themer/
     fzf/
       fzf.go          # fzf adapter: zsh --color flags, per-adapter palette override
       fzf_test.go     # Oracle test + registration test
+    bat/
+      bat.go          # bat adapter: .tmTheme XML template, titleCase helper
+      bat_test.go     # Oracle test + registration test
     delta/
       delta.go        # delta adapter: gitconfig [delta "<name>"] section
       delta_test.go   # Oracle test + registration test
+  themes/               # Theme warehouse
+    cobalt-next-neon/   # Dark theme: palette + ghostty/fzf/delta/bat + starship/gh-dash
+    dayfox/             # Light theme: palette + ghostty/fzf/delta/bat + starship/gh-dash
   testdata/
     bleu.toml         # Oracle fixture: bleu-theme's exact palette + fzf adapter override
     expected/
-      ghostty/bleu    # Expected ghostty output for bleu palette
-      fzf/bleu.zsh    # Expected fzf output for bleu palette (with override)
+      bat/bleu.tmTheme      # Expected bat output for bleu palette
+      ghostty/bleu          # Expected ghostty output for bleu palette
+      fzf/bleu.zsh          # Expected fzf output for bleu palette (with override)
       delta/bleu.gitconfig  # Expected delta output for bleu palette
   main.go             # Entry point; adapter blank imports go here
   Justfile            # just check, just build, just generate
@@ -77,7 +146,7 @@ the-themer/
 
 ### Adapter Pattern
 
-Each app adapter implements `adapter.Adapter`:
+Each generated app adapter implements `adapter.Adapter`:
 - `Name() string` -- identifier (e.g., "ghostty")
 - `DirName() string` -- output subdirectory
 - `FileName(themeName string) string` -- output filename
@@ -89,14 +158,15 @@ Adapters self-register via `init()`. Adding/removing an adapter = adding/removin
 
 One TOML file per theme. Adapter-specific palettes live in `[adapters.<name>.palette]` sections. If present, the section **completely replaces** `[palette]` for that adapter. No merging, no cascading. The override goes through the same ApplyDefaults + Validate pipeline.
 
-```toml
-[palette]
-# ... base colors used by all adapters ...
+### Syntax Highlighting Colors
 
-# Completely replaces [palette] for neovim only
-[adapters.neovim.palette]
-# ... must be a fully valid palette ...
-```
+The `[palette.syntax]` section holds colors specific to syntax highlighting (bat .tmTheme, future neovim). These differ from ANSI/UI colors -- e.g., a muted blue for numeric literals vs. the bright accent for keywords.
+
+| Field | Default | Purpose |
+|-------|---------|---------|
+| number | color4 | Numeric literals and constants |
+| error | color1 | Invalid/error tokens (distinct from ui.error) |
+| line_highlight | selection_bg | Current line background tint |
 
 ### Palette Defaults
 
@@ -112,37 +182,34 @@ When optional fields are omitted, they derive from ANSI colors:
 | | | ui.error | color1 |
 | | | ui.info | color4 |
 
-### MVP Target Apps (Adapters)
+### CLI Commands
 
-1. ghostty -- **Done** (simplest -- nearly 1:1 palette mapping)
-2. fzf -- **Done** (zsh --color flags, per-adapter override for fg/selection_bg/ui.border)
-3. delta -- **Done** (gitconfig named feature section, no override needed)
-4. bat (syntax highlighter -- .tmTheme XML, deferred to Phase 4 with neovim)
-5. neovim (Lua colorscheme with highlight groups -- most complex)
-
-### Non-Adapter Apps (Presets)
-
-Starship configs vary in structure per prompt style, not just colors. Instead of generating from a template, the TOML references an existing config by name:
-
-```toml
-[presets]
-starship = "chef"   # symlink target from user's starship collection
+```
+the-themer generate --input themes/cobalt-next-neon/palette.toml --output themes/cobalt-next-neon/
+the-themer install cobalt-next-neon        # deploy to filesystem (Phase 5)
+the-themer switch cobalt-next-neon         # change active theme (Phase 5)
 ```
 
-Integration with `switch-theme.sh` handles the symlink. Deferred to Phase 5.
+### App Switching Mechanisms (for install/switch)
 
-### Known Color Divergences
-
-The bleu-theme reference uses different colors per-app for semantic purposes:
-- Neovim `fg=#e8f4f8` vs ghostty `fg=#e0ecf4` -- deferred to Phase 4
-- `#00d4ff` (accent) is brighter than ANSI cyan `#6bb6d6` -- lives in `[palette.ui]`
-- Neovim error `#ff6b8a` differs from ANSI color1 `#A167A5` -- adapter-specific mapping
+| App | Mechanism | Config Location |
+|-----|-----------|-----------------|
+| Ghostty | File-write to theme.local | `~/.config/ghostty/theme.local` |
+| Starship | Symlink swap | `~/.config/starship.toml` |
+| Delta | Write name to txt file | `~/.config/delta-theme.txt` (read by git() wrapper) |
+| bat | Write name to txt file | `~/.config/bat-theme.txt` (read by bat() wrapper) |
+| eza | Symlink swap | `~/.config/eza/theme.yml` |
+| fzf | Source shell script | Shell rc sourcing |
+| gh-dash | File copy | `~/.config/gh-dash/config.yml` |
+| Neovim | Headless nvim + Themery | Themery persistence file |
+| Claude CLI | jq edit | `~/.claude.json` .theme key |
 
 ### Reference Material
 
-- `/Users/kyle/Code/meta-terminal/bleu-theme/` -- gold standard output format
-- `/Users/kyle/Code/dotfiles/ghostty/switch-theme.sh` -- current theme switching logic
-- `/Users/kyle/Code/my-projects/cobalt-neon.nvim/` -- existing neovim theme (additional directory access configured)
+- `/Users/kyle/Code/meta-terminal/bleu-theme/` -- gold standard output (22 files across 17 apps)
+- `/Users/kyle/Code/dotfiles/ghostty/switch-theme.sh` -- current switching logic (to be replaced)
+- `/Users/kyle/Code/dotfiles/.bash_aliases` -- bat()/git() theme wrappers (lines 100-121)
+- `/Users/kyle/Code/my-projects/cobalt-neon.nvim/` -- existing neovim theme (standalone plugin)
 
 ## Build & Test
 
@@ -150,17 +217,13 @@ The bleu-theme reference uses different colors per-app for semantic purposes:
 just check              # go vet + go test -v
 just build              # go build -o the-themer .
 just generate <file>    # go run . generate --input <file>
-
-# Oracle test (ghostty):
-# the-themer generate --input testdata/bleu.toml --output /tmp/bleu-test/
-# diff /tmp/bleu-test/ghostty/bleu /Users/kyle/Code/meta-terminal/bleu-theme/ghostty/bleu
-# Expected: only comment header line differs
 ```
 
 ## Conventions
 
 - Conventional commits: `feat:`, `fix:`, `refactor:`, `test:`, `docs:`
 - One adapter per PR when expanding app support
-- Copy bleu-theme file structure literally into templates, then parameterize
+- Convention-based theme directories: presence of subdirectory = app support
+- Generated configs go through oracle tests (byte-for-byte fixture match)
 - Validate input completely before writing any output files
 - Table-driven tests, ordered validation slices for deterministic output
