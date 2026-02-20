@@ -282,6 +282,7 @@ func switchNeovim(t Theme, home string) (string, error) {
 
 // switchClaude edits ~/.claude.json to set the theme key.
 // "dark" deletes the key (dark is the default). Pure Go, no jq dependency.
+// Uses atomic write (temp file + rename) and preserves original permissions.
 func switchClaude(t Theme, home string) (string, error) {
 	value := t.Config.References["claude"]
 	if value == "" {
@@ -291,6 +292,7 @@ func switchClaude(t Theme, home string) (string, error) {
 	claudePath := filepath.Join(home, ".claude.json")
 
 	var data map[string]any
+	var origPerm os.FileMode = 0o644
 
 	raw, err := os.ReadFile(claudePath)
 	if err != nil {
@@ -302,6 +304,10 @@ func switchClaude(t Theme, home string) (string, error) {
 	} else {
 		if err := json.Unmarshal(raw, &data); err != nil {
 			return "", fmt.Errorf("parsing claude.json: %w", err)
+		}
+		// Preserve the original file's permissions.
+		if info, err := os.Stat(claudePath); err == nil {
+			origPerm = info.Mode().Perm()
 		}
 	}
 
@@ -318,7 +324,30 @@ func switchClaude(t Theme, home string) (string, error) {
 	// Append newline for clean file endings.
 	out = append(out, '\n')
 
-	if err := os.WriteFile(claudePath, out, 0o644); err != nil {
+	// Atomic write: write to temp file in same directory, then rename.
+	// Same-directory temp file ensures rename is atomic (same filesystem).
+	tmpFile, err := os.CreateTemp(filepath.Dir(claudePath), ".claude.json.tmp.*")
+	if err != nil {
+		return "", fmt.Errorf("creating temp file: %w", err)
+	}
+	tmpPath := tmpFile.Name()
+
+	if _, err := tmpFile.Write(out); err != nil {
+		tmpFile.Close()
+		os.Remove(tmpPath)
+		return "", fmt.Errorf("writing temp file: %w", err)
+	}
+	if err := tmpFile.Close(); err != nil {
+		os.Remove(tmpPath)
+		return "", fmt.Errorf("closing temp file: %w", err)
+	}
+
+	if err := os.Chmod(tmpPath, origPerm); err != nil {
+		os.Remove(tmpPath)
+		return "", fmt.Errorf("setting permissions: %w", err)
+	}
+	if err := os.Rename(tmpPath, claudePath); err != nil {
+		os.Remove(tmpPath)
 		return "", err
 	}
 

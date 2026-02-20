@@ -314,6 +314,40 @@ func TestSwitch_ClaudeJSON_DarkRemovesKey(t *testing.T) {
 	}
 }
 
+func TestSwitch_ClaudeJSON_PreservesPermissions(t *testing.T) {
+	toml := strings.Replace(minimalPaletteTOML, `claude = "dark"`, `claude = "light"`, 1)
+	themesDir, _ := setupThemeDir(t, nil, toml)
+
+	home := t.TempDir()
+	claudeJSON := filepath.Join(home, ".claude.json")
+
+	// Create claude.json with non-default permissions (0o600).
+	writeFile(t, claudeJSON, `{"existing": true}`)
+	if err := os.Chmod(claudeJSON, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	th, err := LoadTheme(themesDir, "test-theme")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	results := Switch(th, SwitchOpts{HomeDir: home})
+	checkNoErrors(t, results)
+
+	// Verify permissions were preserved.
+	info, err := os.Stat(claudeJSON)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := info.Mode().Perm(); got != 0o600 {
+		t.Errorf("claude.json permissions = %o, want 600", got)
+	}
+	// Verify content is correct.
+	assertFileContains(t, claudeJSON, `"theme": "light"`)
+	assertFileContains(t, claudeJSON, `"existing": true`)
+}
+
 func TestSwitch_ReferenceFallback_Bat(t *testing.T) {
 	// Theme with no bat/ dir but references.bat = "Dracula".
 	themesDir, _ := setupThemeDir(t, nil, minimalPaletteTOML)

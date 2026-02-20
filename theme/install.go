@@ -221,7 +221,12 @@ func copyDirContents(srcDir, destDir string) (string, error) {
 				unchanged = append(unchanged, e.Name())
 				continue
 			}
+			// File exists but differs — overwrite it.
+			if err := copyFile(src, dest); err != nil {
+				return "", fmt.Errorf("copying %s: %w", e.Name(), err)
+			}
 			overwrote = append(overwrote, e.Name())
+			continue
 		}
 
 		if err := copyFile(src, dest); err != nil {
@@ -230,13 +235,19 @@ func copyDirContents(srcDir, destDir string) (string, error) {
 		copied = append(copied, e.Name())
 	}
 
-	if len(copied) == 0 && len(unchanged) > 0 {
+	if len(copied) == 0 && len(overwrote) == 0 && len(unchanged) > 0 {
 		return fmt.Sprintf("unchanged in %s", destDir), nil
 	}
-	msg := fmt.Sprintf("installed %s to %s", strings.Join(copied, ", "), destDir)
-	if len(overwrote) > 0 {
-		msg += fmt.Sprintf(" (overwrote: %s)", strings.Join(overwrote, ", "))
+
+	// Build message from whichever lists have entries.
+	var parts []string
+	if len(copied) > 0 {
+		parts = append(parts, fmt.Sprintf("installed %s", strings.Join(copied, ", ")))
 	}
+	if len(overwrote) > 0 {
+		parts = append(parts, fmt.Sprintf("overwrote %s", strings.Join(overwrote, ", ")))
+	}
+	msg := fmt.Sprintf("%s to %s", strings.Join(parts, ", "), destDir)
 	if len(unchanged) > 0 {
 		msg += fmt.Sprintf(" (unchanged: %s)", strings.Join(unchanged, ", "))
 	}
