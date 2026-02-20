@@ -456,6 +456,64 @@ func TestState_RoundTrip(t *testing.T) {
 	}
 }
 
+func TestDefault_RoundTrip(t *testing.T) {
+	home := t.TempDir()
+
+	// Initially no default.
+	name, err := ReadDefault(home, "dark")
+	if err != nil {
+		t.Fatalf("ReadDefault failed: %v", err)
+	}
+	if name != "" {
+		t.Errorf("ReadDefault on empty = %q, want empty", name)
+	}
+
+	// Write dark default.
+	if err := WriteDefault(home, "dark", "cobalt-next-neon"); err != nil {
+		t.Fatalf("WriteDefault dark failed: %v", err)
+	}
+	name, err = ReadDefault(home, "dark")
+	if err != nil {
+		t.Fatalf("ReadDefault dark failed: %v", err)
+	}
+	if name != "cobalt-next-neon" {
+		t.Errorf("ReadDefault dark = %q, want %q", name, "cobalt-next-neon")
+	}
+
+	// Write light default — independent from dark.
+	if err := WriteDefault(home, "light", "dayfox"); err != nil {
+		t.Fatalf("WriteDefault light failed: %v", err)
+	}
+	name, err = ReadDefault(home, "light")
+	if err != nil {
+		t.Fatalf("ReadDefault light failed: %v", err)
+	}
+	if name != "dayfox" {
+		t.Errorf("ReadDefault light = %q, want %q", name, "dayfox")
+	}
+
+	// Dark still intact.
+	name, err = ReadDefault(home, "dark")
+	if err != nil {
+		t.Fatalf("ReadDefault dark after light write failed: %v", err)
+	}
+	if name != "cobalt-next-neon" {
+		t.Errorf("ReadDefault dark = %q, want %q after light write", name, "cobalt-next-neon")
+	}
+
+	// Overwrite dark default.
+	if err := WriteDefault(home, "dark", "tekapo-sunset-dark"); err != nil {
+		t.Fatalf("WriteDefault overwrite failed: %v", err)
+	}
+	name, err = ReadDefault(home, "dark")
+	if err != nil {
+		t.Fatalf("ReadDefault after overwrite failed: %v", err)
+	}
+	if name != "tekapo-sunset-dark" {
+		t.Errorf("ReadDefault dark = %q, want %q", name, "tekapo-sunset-dark")
+	}
+}
+
 // assertFileContains reads a file and checks it contains the expected substring.
 func assertFileContains(t *testing.T, path, want string) {
 	t.Helper()

@@ -32,6 +32,23 @@ func init() {
 func runSwitch(cmd *cobra.Command, args []string) error {
 	themeName := args[0]
 
+	// Resolve "dark" and "light" to their configured default themes.
+	if themeName == "dark" || themeName == "light" {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return fmt.Errorf("resolving home directory: %w", err)
+		}
+		resolved, err := theme.ReadDefault(home, themeName)
+		if err != nil {
+			return err
+		}
+		if resolved == "" {
+			return fmt.Errorf("no default theme configured for %q — use \"the-themer set %s <theme-name>\" first", themeName, themeName)
+		}
+		fmt.Fprintf(cmd.OutOrStdout(), "Resolving %q to %q\n", themeName, resolved)
+		themeName = resolved
+	}
+
 	t, err := theme.LoadTheme(switchThemesDir, themeName)
 	if err != nil {
 		return err

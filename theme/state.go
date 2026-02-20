@@ -41,3 +41,33 @@ func WriteState(home, themeName string) error {
 	}
 	return nil
 }
+
+// defaultPath returns the path to a variant default file (default-dark or default-light).
+func defaultPath(home, variant string) string {
+	return filepath.Join(stateDir(home), "default-"+variant)
+}
+
+// ReadDefault reads the configured default theme for a variant ("dark" or "light").
+// Returns an empty string (not an error) if no default has been set.
+func ReadDefault(home, variant string) (string, error) {
+	data, err := os.ReadFile(defaultPath(home, variant))
+	if err != nil {
+		if os.IsNotExist(err) {
+			return "", nil
+		}
+		return "", fmt.Errorf("reading default-%s: %w", variant, err)
+	}
+	return strings.TrimSpace(string(data)), nil
+}
+
+// WriteDefault records a theme name as the default for a variant ("dark" or "light").
+func WriteDefault(home, variant, themeName string) error {
+	dir := stateDir(home)
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return fmt.Errorf("creating state directory: %w", err)
+	}
+	if err := os.WriteFile(defaultPath(home, variant), []byte(themeName+"\n"), 0o644); err != nil {
+		return fmt.Errorf("writing default-%s: %w", variant, err)
+	}
+	return nil
+}
