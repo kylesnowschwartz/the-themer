@@ -1,6 +1,7 @@
 package theme
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"io"
 	"os"
@@ -207,19 +208,39 @@ func copyDirContents(srcDir, destDir string) (string, error) {
 		return "", fmt.Errorf("reading %s: %w", srcDir, err)
 	}
 
-	var copied []string
+	var copied, overwrote, unchanged []string
 	for _, e := range entries {
 		if e.IsDir() {
 			continue
 		}
 		src := filepath.Join(srcDir, e.Name())
 		dest := filepath.Join(destDir, e.Name())
+
+		if _, err := os.Stat(dest); err == nil {
+			if filesEqual(src, dest) {
+				unchanged = append(unchanged, e.Name())
+				continue
+			}
+			overwrote = append(overwrote, e.Name())
+		}
+
 		if err := copyFile(src, dest); err != nil {
 			return "", fmt.Errorf("copying %s: %w", e.Name(), err)
 		}
 		copied = append(copied, e.Name())
 	}
-	return fmt.Sprintf("installed %s to %s", strings.Join(copied, ", "), destDir), nil
+
+	if len(copied) == 0 && len(unchanged) > 0 {
+		return fmt.Sprintf("unchanged in %s", destDir), nil
+	}
+	msg := fmt.Sprintf("installed %s to %s", strings.Join(copied, ", "), destDir)
+	if len(overwrote) > 0 {
+		msg += fmt.Sprintf(" (overwrote: %s)", strings.Join(overwrote, ", "))
+	}
+	if len(unchanged) > 0 {
+		msg += fmt.Sprintf(" (unchanged: %s)", strings.Join(unchanged, ", "))
+	}
+	return msg, nil
 }
 
 // copyFile copies a single file from src to dest, preserving permissions.
@@ -243,4 +264,29 @@ func copyFile(src, dest string) error {
 
 	_, err = io.Copy(out, in)
 	return err
+}
+
+// filesEqual returns true if two files have identical SHA-256 hashes.
+func filesEqual(a, b string) bool {
+	hashA, errA := fileHash(a)
+	hashB, errB := fileHash(b)
+	if errA != nil || errB != nil {
+		return false
+	}
+	return hashA == hashB
+}
+
+// fileHash returns the hex-encoded SHA-256 hash of a file's contents.
+func fileHash(path string) (string, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	h := sha256.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%x", h.Sum(nil)), nil
 }

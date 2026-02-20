@@ -138,7 +138,7 @@ func TestInstall_CopiesFiles(t *testing.T) {
 	themesDir, themeDir := setupThemeDir(t, []string{"ghostty", "fzf"}, minimalPaletteTOML)
 
 	// Create source files in the theme.
-	writeFile(t, filepath.Join(themeDir, "ghostty", "test-theme"), "ghostty config content")
+	writeFile(t, filepath.Join(themeDir, "ghostty", "test-theme.ghostty"), "ghostty config content")
 	writeFile(t, filepath.Join(themeDir, "fzf", "test-theme.zsh"), "fzf config content")
 
 	home := t.TempDir()
@@ -150,7 +150,7 @@ func TestInstall_CopiesFiles(t *testing.T) {
 	results := Install(th, InstallOpts{HomeDir: home})
 
 	// Check ghostty was installed.
-	ghosttyDest := filepath.Join(home, ".config", "ghostty", "themes", "test-theme")
+	ghosttyDest := filepath.Join(home, ".config", "ghostty", "themes", "test-theme.ghostty")
 	assertFileContains(t, ghosttyDest, "ghostty config content")
 
 	// Check fzf was installed.
@@ -167,7 +167,7 @@ func TestInstall_CopiesFiles(t *testing.T) {
 
 func TestSwitch_GhosttyThemeLocal(t *testing.T) {
 	themesDir, themeDir := setupThemeDir(t, []string{"ghostty"}, minimalPaletteTOML)
-	writeFile(t, filepath.Join(themeDir, "ghostty", "test-theme"), "config")
+	writeFile(t, filepath.Join(themeDir, "ghostty", "test-theme.ghostty"), "config")
 
 	home := t.TempDir()
 	th, err := LoadTheme(themesDir, "test-theme")
@@ -179,7 +179,7 @@ func TestSwitch_GhosttyThemeLocal(t *testing.T) {
 	checkNoErrors(t, results)
 
 	themeLocal := filepath.Join(home, ".config", "ghostty", "theme.local")
-	assertFileContains(t, themeLocal, "theme = test-theme")
+	assertFileContains(t, themeLocal, "theme = test-theme.ghostty")
 }
 
 func TestSwitch_BatThemeTxt(t *testing.T) {
@@ -196,7 +196,7 @@ func TestSwitch_BatThemeTxt(t *testing.T) {
 	checkNoErrors(t, results)
 
 	batTheme := filepath.Join(home, ".config", "bat-theme.txt")
-	assertFileContains(t, batTheme, "Test-Theme")
+	assertFileContains(t, batTheme, "test-theme")
 }
 
 func TestSwitch_DeltaThemeTxt(t *testing.T) {
@@ -419,24 +419,6 @@ func TestState_RoundTrip(t *testing.T) {
 	}
 	if name != "dayfox" {
 		t.Errorf("ReadState = %q, want %q", name, "dayfox")
-	}
-}
-
-func TestTitleCase(t *testing.T) {
-	tests := []struct {
-		in, want string
-	}{
-		{"cobalt-next-neon", "Cobalt-Next-Neon"},
-		{"dayfox", "Dayfox"},
-		{"bleu", "Bleu"},
-		{"", ""},
-		{"Already-Upper", "Already-Upper"},
-	}
-	for _, tc := range tests {
-		got := titleCase(tc.in)
-		if got != tc.want {
-			t.Errorf("titleCase(%q) = %q, want %q", tc.in, got, tc.want)
-		}
 	}
 }
 

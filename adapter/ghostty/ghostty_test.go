@@ -26,7 +26,7 @@ func TestGenerate_OracleBleu(t *testing.T) {
 		t.Fatalf("Generate: %v", err)
 	}
 
-	expected, err := os.ReadFile("../../testdata/expected/ghostty/bleu")
+	expected, err := os.ReadFile("../../testdata/expected/ghostty/bleu.ghostty")
 	if err != nil {
 		t.Fatalf("reading expected fixture: %v", err)
 	}
@@ -46,8 +46,8 @@ func TestAdapterRegistration(t *testing.T) {
 			if a.DirName() != "ghostty" {
 				t.Errorf("DirName: got %q, want %q", a.DirName(), "ghostty")
 			}
-			if a.FileName("bleu") != "bleu" {
-				t.Errorf("FileName: got %q, want %q", a.FileName("bleu"), "bleu")
+			if a.FileName("bleu") != "bleu.ghostty" {
+				t.Errorf("FileName: got %q, want %q", a.FileName("bleu"), "bleu.ghostty")
 			}
 		}
 	}

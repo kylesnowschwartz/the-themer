@@ -18,7 +18,7 @@ type ghosttyAdapter struct{}
 
 func (g *ghosttyAdapter) Name() string                     { return "ghostty" }
 func (g *ghosttyAdapter) DirName() string                  { return "ghostty" }
-func (g *ghosttyAdapter) FileName(themeName string) string { return themeName }
+func (g *ghosttyAdapter) FileName(themeName string) string { return themeName + ".ghostty" }
 
 func (g *ghosttyAdapter) Generate(cfg palette.Config) ([]byte, error) {
 	var buf bytes.Buffer

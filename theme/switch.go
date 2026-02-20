@@ -66,15 +66,15 @@ func Switch(t Theme, opts SwitchOpts) []SwitchResult {
 	return results
 }
 
-// switchGhostty writes theme.local with the theme file reference.
-// Ghostty reads custom themes from ~/.config/ghostty/themes/ by filename.
+// switchGhostty writes theme.local with the theme filename reference.
+// Ghostty matches the `theme` value against filenames in its themes directory,
+// so we use the full filename including any .ghostty extension.
 func switchGhostty(t Theme, home string) (string, error) {
 	ghosttyDir := filepath.Join(t.Dir, "ghostty")
 	if _, err := os.Stat(ghosttyDir); os.IsNotExist(err) {
 		return "", nil
 	}
 
-	// Find the theme file in the ghostty dir.
 	themeFile, err := firstFile(ghosttyDir)
 	if err != nil {
 		return "", fmt.Errorf("reading ghostty dir: %w", err)
@@ -96,7 +96,8 @@ func switchGhostty(t Theme, home string) (string, error) {
 }
 
 // switchBat writes the bat theme name to bat-theme.txt.
-// Generated themes use titleCase of the theme name (matching .tmTheme <name>).
+// bat identifies custom themes by filename (sans .tmTheme extension), so we
+// read the actual filename from the theme's bat/ directory.
 // If only a reference is set, use that directly.
 func switchBat(t Theme, home string) (string, error) {
 	batDir := filepath.Join(t.Dir, "bat")
@@ -109,8 +110,14 @@ func switchBat(t Theme, home string) (string, error) {
 
 	var themeName string
 	if hasBatDir {
-		// Generated bat theme name matches titleCase in the .tmTheme template.
-		themeName = titleCase(t.Config.Theme.Name)
+		file, err := firstFile(batDir)
+		if err != nil {
+			return "", fmt.Errorf("reading bat dir: %w", err)
+		}
+		if file == "" {
+			return "", nil
+		}
+		themeName = strings.TrimSuffix(file, ".tmTheme")
 	} else {
 		themeName = refName
 	}
@@ -319,22 +326,6 @@ func switchClaude(t Theme, home string) (string, error) {
 		return "claude.json -> removed theme key (dark is default)", nil
 	}
 	return fmt.Sprintf("claude.json -> %s", value), nil
-}
-
-// titleCase capitalizes the first letter of each hyphen-separated word.
-// "cobalt-next-neon" -> "Cobalt-Next-Neon". Used for bat theme names.
-func titleCase(s string) string {
-	parts := strings.Split(s, "-")
-	for i, part := range parts {
-		if len(part) > 0 {
-			r := []rune(part)
-			if r[0] >= 'a' && r[0] <= 'z' {
-				r[0] -= 32
-			}
-			parts[i] = string(r)
-		}
-	}
-	return strings.Join(parts, "-")
 }
 
 // firstFile returns the name of the first regular file in dir, or "" if empty.

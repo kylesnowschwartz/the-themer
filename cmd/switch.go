@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 
@@ -54,7 +55,10 @@ func runSwitch(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("some apps failed to switch")
 	}
 
-	if err := theme.WriteState("", themeName); err != nil {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		fmt.Fprintf(cmd.ErrOrStderr(), "  state: WARNING could not resolve home: %v\n", err)
+	} else if err := theme.WriteState(home, themeName); err != nil {
 		fmt.Fprintf(cmd.ErrOrStderr(), "  state: WARNING could not write state: %v\n", err)
 	}
 
