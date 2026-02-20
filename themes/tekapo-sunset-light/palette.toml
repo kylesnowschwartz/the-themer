@@ -1,0 +1,38 @@
+# Tekapo Sunset Light palette
+# A warm alpenglow light theme inspired by New Zealand's Lake Tekapo at dawn.
+# Source: extracted from tekapo-sunset.nvim lua/tekapo-sunset.lua
+
+[theme]
+name = "tekapo-sunset-light"
+variant = "light"
+
+[palette]
+bg = "#ede3e0"
+fg = "#1a1e26"
+cursor = "#a34d2e"
+selection_bg = "#c0d0e4"
+selection_fg = "#1a1e26"
+
+# ANSI 16 colors (normal — dark tones readable on light bg)
+color0 = "#1a1e26"    # black (fg — dark text)
+color1 = "#a34d2e"    # red
+color2 = "#556c4b"    # green
+color3 = "#9c7826"    # yellow
+color4 = "#416895"    # blue
+color5 = "#87586b"    # magenta
+color6 = "#426c74"    # cyan
+color7 = "#d2c8c5"    # white
+
+# ANSI 16 colors (bright — mid-tones)
+color8 = "#5e6a7e"    # bright black (comment)
+color9 = "#c46442"    # bright red
+color10 = "#637d59"   # bright green
+color11 = "#c49b49"   # bright yellow
+color12 = "#4f79a8"   # bright blue
+color13 = "#9c6a7e"   # bright magenta
+color14 = "#5f8d95"   # bright cyan
+color15 = "#ede3e0"   # bright white (bg)
+
+[references]
+neovim = "tekapo-sunset-light"
+claude = "light"

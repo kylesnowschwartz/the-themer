@@ -1,0 +1,22 @@
+; tekapo-sunset-dark theme for delta
+; Add to .gitconfig or include via [include] path = <this-file>
+[delta "tekapo-sunset-dark"]
+	light = false
+	syntax-theme = Nord
+	navigate = true
+	keep-plus-minus-markers = true
+	file-decoration-style = "none"
+	file-style = "#4f79a8 bold"
+	minus-style = "#c46442"
+	minus-emph-style = "#c46442 bold"
+	plus-style = "#637d59"
+	plus-emph-style = "#637d59 bold"
+	hunk-header-style = "#5f8d95 bold"
+	line-numbers = true
+	line-numbers-minus-style = "#c46442"
+	line-numbers-plus-style = "#637d59"
+	line-numbers-left-style = "#5e6a7e"
+	line-numbers-right-style = "#5e6a7e"
+	line-numbers-zero-style = "#5e6a7e"
+	zero-style = "syntax"
+	whitespace-error-style = "reverse #9c6a7e"

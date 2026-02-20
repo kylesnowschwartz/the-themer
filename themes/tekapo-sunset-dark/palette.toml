@@ -1,0 +1,38 @@
+# Tekapo Sunset Dark palette
+# A warm twilight-violet dark theme inspired by New Zealand's Lake Tekapo at dusk.
+# Source: extracted from tekapo-sunset.nvim lua/tekapo-sunset.lua
+
+[theme]
+name = "tekapo-sunset-dark"
+variant = "dark"
+
+[palette]
+bg = "#1e1626"
+fg = "#e4d8c8"
+cursor = "#d98670"
+selection_bg = "#362e52"
+selection_fg = "#e4d8c8"
+
+# ANSI 16 colors (normal)
+color0 = "#1e1626"    # black (bg)
+color1 = "#c46442"    # red
+color2 = "#637d59"    # green
+color3 = "#c49b49"    # yellow
+color4 = "#4f79a8"    # blue
+color5 = "#9c6a7e"    # magenta
+color6 = "#5f8d95"    # cyan
+color7 = "#c8b8a4"    # white
+
+# ANSI 16 colors (bright)
+color8 = "#5e6a7e"    # bright black (comment)
+color9 = "#d98670"    # bright red
+color10 = "#8bac84"   # bright green
+color11 = "#e2c87a"   # bright yellow
+color12 = "#84aad0"   # bright blue
+color13 = "#ce959c"   # bright magenta
+color14 = "#96b8bc"   # bright cyan
+color15 = "#e4d8c8"   # bright white (fg)
+
+[references]
+neovim = "tekapo-sunset-dark"
+claude = "dark"
