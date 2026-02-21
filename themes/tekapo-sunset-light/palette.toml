@@ -21,16 +21,16 @@ color3 = "#9c7826"    # yellow
 color4 = "#416895"    # blue
 color5 = "#87586b"    # magenta
 color6 = "#426c74"    # cyan
-color7 = "#d2c8c5"    # white
+color7 = "#967e77"    # white (darkened for 3:1 contrast on light bg)
 
 # ANSI 16 colors (bright — mid-tones)
-color8 = "#5e6a7e"    # bright black (comment)
+color8 = "#5c687b"    # bright black (comment)
 color9 = "#c46442"    # bright red
 color10 = "#637d59"   # bright green
-color11 = "#c49b49"   # bright yellow
+color11 = "#a17d35"   # bright yellow (darkened for 3:1 contrast on light bg)
 color12 = "#4f79a8"   # bright blue
 color13 = "#9c6a7e"   # bright magenta
-color14 = "#5f8d95"   # bright cyan
+color14 = "#5d8a91"   # bright cyan
 color15 = "#ede3e0"   # bright white (bg)
 
 [references]

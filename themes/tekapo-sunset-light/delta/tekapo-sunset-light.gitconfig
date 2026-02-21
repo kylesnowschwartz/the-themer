@@ -15,8 +15,8 @@
 	line-numbers = true
 	line-numbers-minus-style = "#a34d2e"
 	line-numbers-plus-style = "#556c4b"
-	line-numbers-left-style = "#5e6a7e"
-	line-numbers-right-style = "#5e6a7e"
-	line-numbers-zero-style = "#5e6a7e"
+	line-numbers-left-style = "#5c687b"
+	line-numbers-right-style = "#5c687b"
+	line-numbers-zero-style = "#5c687b"
 	zero-style = "syntax"
 	whitespace-error-style = "reverse #87586b"

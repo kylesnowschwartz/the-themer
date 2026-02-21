@@ -15,16 +15,16 @@ selection_fg = "#e4d8c8"
 
 # ANSI 16 colors (normal)
 color0 = "#1e1626"    # black (bg)
-color1 = "#c46442"    # red
-color2 = "#637d59"    # green
+color1 = "#c56745"    # red
+color2 = "#6d8962"    # green
 color3 = "#c49b49"    # yellow
-color4 = "#4f79a8"    # blue
-color5 = "#9c6a7e"    # magenta
+color4 = "#5c84b2"    # blue
+color5 = "#a37487"    # magenta
 color6 = "#5f8d95"    # cyan
 color7 = "#c8b8a4"    # white
 
 # ANSI 16 colors (bright)
-color8 = "#5e6a7e"    # bright black (comment)
+color8 = "#758298"    # bright black (comment)
 color9 = "#d98670"    # bright red
 color10 = "#8bac84"   # bright green
 color11 = "#e2c87a"   # bright yellow

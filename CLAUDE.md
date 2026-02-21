@@ -148,6 +148,8 @@ the-themer/
       ghostty/bleu          # Expected ghostty output for bleu palette
       fzf/bleu.zsh          # Expected fzf output for bleu palette (with override)
       delta/bleu.gitconfig  # Expected delta output for bleu palette
+  scripts/
+    contrast-audit.py # WCAG 2.1 contrast ratio checker for palette TOMLs
   main.go             # Entry point; adapter blank imports go here
   Justfile            # just check, just build, just generate
 ```
@@ -239,6 +241,15 @@ Active theme state recorded at `~/.config/the-themer/current`.
 just check              # go vet + go test -v
 just build              # go build -o the-themer .
 just generate <file>    # go run . generate --input <file>
+```
+
+### Contrast Audit
+
+WCAG 2.1 contrast ratio checker for palette TOML files. Checks all 16 ANSI colors + fg against the palette's bg. Flags colors below 3:1 as failures, warns when primary text colors (color0/7/8/15) are below 4.5:1. Exit code 1 on any failure.
+
+```bash
+python3 scripts/contrast-audit.py themes/tekapo-sunset-dark/palette.toml
+python3 scripts/contrast-audit.py themes/*/palette.toml   # audit all themes
 ```
 
 ## Conventions
