@@ -19,7 +19,12 @@ This includes writing config pointers (theme.local, bat-theme.txt),
 swapping symlinks (starship, fzf, eza), and invoking external tools
 (nvim Themery, claude.json edit).
 
-Only apps configured for the theme are switched. Others are skipped.`,
+Only apps configured for the theme are switched. Others are skipped.
+
+You can pass "dark" or "light" as the theme name to switch to the
+default theme for that variant. Set defaults with:
+  the-themer set dark <theme-name>
+  the-themer set light <theme-name>`,
 	Args: cobra.ExactArgs(1),
 	RunE: runSwitch,
 }
