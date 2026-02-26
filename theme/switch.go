@@ -1,12 +1,13 @@
 package theme
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/tidwall/sjson"
 )
 
 // SwitchOpts configures the switch operation.
@@ -281,8 +282,10 @@ func switchNeovim(t Theme, home string) (string, error) {
 }
 
 // switchClaude edits ~/.claude.json to set the theme key.
-// "dark" deletes the key (dark is the default). Pure Go, no jq dependency.
-// Uses atomic write (temp file + rename) and preserves original permissions.
+// "dark" deletes the key (dark is the default).
+// Uses sjson for surgical edits — only the theme key is touched, preserving
+// key order, formatting, and numeric precision in the rest of the file.
+// Atomic write (temp file + rename) and original permissions are preserved.
 func switchClaude(t Theme, home string) (string, error) {
 	value := t.Config.References["claude"]
 	if value == "" {
@@ -291,41 +294,29 @@ func switchClaude(t Theme, home string) (string, error) {
 
 	claudePath := filepath.Join(home, ".claude.json")
 
-	var data map[string]any
 	var origPerm os.FileMode = 0o644
-
 	raw, err := os.ReadFile(claudePath)
 	if err != nil {
 		if !os.IsNotExist(err) {
 			return "", fmt.Errorf("reading claude.json: %w", err)
 		}
-		// File doesn't exist — start fresh.
-		data = make(map[string]any)
-	} else {
-		if err := json.Unmarshal(raw, &data); err != nil {
-			return "", fmt.Errorf("parsing claude.json: %w", err)
-		}
-		// Preserve the original file's permissions.
-		if info, err := os.Stat(claudePath); err == nil {
-			origPerm = info.Mode().Perm()
-		}
+		// File doesn't exist — start with empty object.
+		raw = []byte("{}")
+	} else if info, err := os.Stat(claudePath); err == nil {
+		origPerm = info.Mode().Perm()
 	}
 
+	var out []byte
 	if value == "dark" {
-		delete(data, "theme")
+		out, err = sjson.DeleteBytes(raw, "theme")
 	} else {
-		data["theme"] = value
+		out, err = sjson.SetBytes(raw, "theme", value)
 	}
-
-	out, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
-		return "", fmt.Errorf("marshaling claude.json: %w", err)
+		return "", fmt.Errorf("editing claude.json: %w", err)
 	}
-	// Append newline for clean file endings.
-	out = append(out, '\n')
 
-	// Atomic write: write to temp file in same directory, then rename.
-	// Same-directory temp file ensures rename is atomic (same filesystem).
+	// Atomic write: temp file in same directory, then rename.
 	tmpFile, err := os.CreateTemp(filepath.Dir(claudePath), ".claude.json.tmp.*")
 	if err != nil {
 		return "", fmt.Errorf("creating temp file: %w", err)

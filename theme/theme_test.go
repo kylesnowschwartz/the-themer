@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/tidwall/gjson"
 )
 
 // minimalPaletteTOML is a valid palette.toml for testing.
@@ -282,7 +284,7 @@ func TestSwitch_ClaudeJSON_Light(t *testing.T) {
 	checkNoErrors(t, results)
 
 	claudeJSON := filepath.Join(home, ".claude.json")
-	assertFileContains(t, claudeJSON, `"theme": "light"`)
+	assertJSONKey(t, claudeJSON, "theme", "light")
 }
 
 func TestSwitch_ClaudeJSON_DarkRemovesKey(t *testing.T) {
@@ -344,8 +346,8 @@ func TestSwitch_ClaudeJSON_PreservesPermissions(t *testing.T) {
 		t.Errorf("claude.json permissions = %o, want 600", got)
 	}
 	// Verify content is correct.
-	assertFileContains(t, claudeJSON, `"theme": "light"`)
-	assertFileContains(t, claudeJSON, `"existing": true`)
+	assertJSONKey(t, claudeJSON, "theme", "light")
+	assertJSONKey(t, claudeJSON, "existing", "true")
 }
 
 func TestSwitch_ReferenceFallback_Bat(t *testing.T) {
@@ -515,6 +517,23 @@ func TestDefault_RoundTrip(t *testing.T) {
 }
 
 // assertFileContains reads a file and checks it contains the expected substring.
+// assertJSONKey checks that a JSON file has the given top-level key set to want.
+func assertJSONKey(t *testing.T, path, key, want string) {
+	t.Helper()
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("reading %s: %v", path, err)
+	}
+	result := gjson.GetBytes(data, key)
+	if !result.Exists() {
+		t.Errorf("%s: key %q not found, got:\n%s", path, key, data)
+		return
+	}
+	if result.String() != want {
+		t.Errorf("%s: key %q = %q, want %q", path, key, result.String(), want)
+	}
+}
+
 func assertFileContains(t *testing.T, path, want string) {
 	t.Helper()
 	data, err := os.ReadFile(path)
