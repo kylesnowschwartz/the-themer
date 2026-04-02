@@ -1,0 +1,22 @@
+; catppuccin-latte theme for delta
+; Add to .gitconfig or include via [include] path = <this-file>
+[delta "catppuccin-latte"]
+	light = true
+	syntax-theme = Nord
+	navigate = true
+	keep-plus-minus-markers = true
+	file-decoration-style = "none"
+	file-style = "#1e66f5 bold"
+	minus-style = "#d20f39"
+	minus-emph-style = "#d20f39 bold"
+	plus-style = "#40a02b"
+	plus-emph-style = "#40a02b bold"
+	hunk-header-style = "#1e66f5 bold"
+	line-numbers = true
+	line-numbers-minus-style = "#d20f39"
+	line-numbers-plus-style = "#40a02b"
+	line-numbers-left-style = "#6c6f85"
+	line-numbers-right-style = "#6c6f85"
+	line-numbers-zero-style = "#6c6f85"
+	zero-style = "syntax"
+	whitespace-error-style = "reverse #ea76cb"

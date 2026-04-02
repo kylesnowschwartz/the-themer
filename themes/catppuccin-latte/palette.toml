@@ -1,0 +1,44 @@
+# Catppuccin Latte palette
+# A soothing pastel light theme.
+# Source: catppuccin/nvim (palettes/latte.lua) + catppuccin/ghostty (ANSI mappings)
+# Upstream: https://github.com/catppuccin/catppuccin
+
+[theme]
+name = "catppuccin-latte"
+variant = "light"
+
+[palette]
+bg = "#eff1f5"          # base
+fg = "#4c4f69"          # text
+cursor = "#dc8a78"      # rosewater
+selection_bg = "#d8dae1" # computed (official ghostty port value)
+selection_fg = "#4c4f69" # text
+
+# ANSI 16 colors (normal) — from catppuccin/ghostty official port
+color0 = "#5c5f77"      # black (subtext1)
+color1 = "#d20f39"      # red
+color2 = "#40a02b"      # green
+color3 = "#df8e1d"      # yellow
+color4 = "#1e66f5"      # blue
+color5 = "#ea76cb"      # magenta (pink)
+color6 = "#179299"      # cyan (teal)
+color7 = "#acb0be"      # white (surface2)
+
+# ANSI 16 colors (bright) — catppuccin uses identical bright/normal
+color8 = "#6c6f85"      # bright black (subtext0)
+color9 = "#d20f39"      # bright red
+color10 = "#40a02b"     # bright green
+color11 = "#df8e1d"     # bright yellow
+color12 = "#1e66f5"     # bright blue
+color13 = "#ea76cb"     # bright magenta (pink)
+color14 = "#179299"     # bright cyan (teal)
+color15 = "#bcc0cc"     # bright white (surface1)
+
+[palette.ui]
+accent = "#1e66f5"      # blue
+border = "#ccd0da"      # surface0
+
+[references]
+neovim = "catppuccin-latte"
+claude = "light"
+bat = "Catppuccin Latte"
