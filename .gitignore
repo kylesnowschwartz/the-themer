@@ -3,3 +3,6 @@ the-themer
 
 # Agent artifacts
 .agent-history/
+
+# Cloned reference repos
+.cloned-sources/

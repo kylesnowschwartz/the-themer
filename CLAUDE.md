@@ -243,14 +243,27 @@ just build              # go build -o the-themer .
 just generate <file>    # go run . generate --input <file>
 ```
 
-### Contrast Audit
+### Palette Audit (APCA + OKLCH)
 
-WCAG 2.1 contrast ratio checker for palette TOML files. Checks all 16 ANSI colors + fg against the palette's bg. Flags colors below 3:1 as failures, warns when primary text colors (color0/7/8/15) are below 4.5:1. Exit code 1 on any failure.
+Perceptual contrast and color analysis for palette TOML files. Uses APCA-W3 (WCAG 3.0 candidate) for contrast measurement and OKLCH for hue/chroma analysis. Requires `uv` (dependencies managed via PEP 723 inline script metadata).
+
+Audit sections:
+1. **APCA Contrast** -- Lc value per slot vs bg, variant-aware thresholds (body text |Lc|>=75, chromatic normals >=30, brights >=45, UI elements >=45)
+2. **OKLCH Decomposition** -- L, C, H for every color, achromatic flags
+3. **Hue Identity** -- centroid-based check that chromatic slots land in expected hue families
+4. **Pair Coherence** -- delta-L/C/H for normal/bright pairs, hue drift detection
+5. **Distinguishability** -- pairwise deltaE_OK among chromatic normals and brights
+6. **Cross-Context Contrast** -- selection_fg on selection_bg, fg on cursor, UI/syntax on bg
+7. **Adapter Overrides** -- full pipeline per adapter override palette
 
 ```bash
-python3 scripts/contrast-audit.py themes/tekapo-sunset-dark/palette.toml
-python3 scripts/contrast-audit.py themes/*/palette.toml   # audit all themes
+just audit                                                    # all themes
+just audit-theme cobalt-next-neon                             # single theme
+uv run scripts/contrast-audit.py a.toml --compare b.toml     # side-by-side
+uv run scripts/contrast-audit.py themes/*/palette.toml --strict  # warnings = failures
 ```
+
+Exit code 1 on contrast failures. Hue identity and distinguishability produce warnings only. `--strict` promotes warnings to failures.
 
 ## Conventions
 

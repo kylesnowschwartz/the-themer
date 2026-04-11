@@ -23,6 +23,22 @@ test-quiet:
 generate input *args="":
     go run . generate --input {{input}} {{args}}
 
+# Run palette audit (APCA + OKLCH) across all themes
+audit:
+    uv run scripts/contrast-audit.py themes/*/palette.toml
+
+# Run palette audit for a specific theme
+audit-theme theme:
+    uv run scripts/contrast-audit.py themes/{{theme}}/palette.toml
+
+# Preview palette colors in terminal
+preview *args:
+    uv run scripts/preview-palette.py {{args}}
+
+# Preview a specific theme
+preview-theme theme:
+    uv run scripts/preview-palette.py themes/{{theme}}/palette.toml
+
 # Clean build artifacts
 clean:
     rm -f the-themer
