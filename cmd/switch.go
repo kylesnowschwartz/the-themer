@@ -31,7 +31,7 @@ default theme for that variant. Set defaults with:
 
 func init() {
 	rootCmd.AddCommand(switchCmd)
-	switchCmd.Flags().StringVar(&switchThemesDir, "themes-dir", "./themes/", "path to the themes directory")
+	switchCmd.Flags().StringVar(&switchThemesDir, "themes-dir", defaultThemesDir(), "path to the themes directory")
 }
 
 func runSwitch(cmd *cobra.Command, args []string) error {

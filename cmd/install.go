@@ -24,7 +24,7 @@ config in the theme are skipped.`,
 
 func init() {
 	rootCmd.AddCommand(installCmd)
-	installCmd.Flags().StringVar(&installThemesDir, "themes-dir", "./themes/", "path to the themes directory")
+	installCmd.Flags().StringVar(&installThemesDir, "themes-dir", defaultThemesDir(), "path to the themes directory")
 }
 
 func runInstall(cmd *cobra.Command, args []string) error {

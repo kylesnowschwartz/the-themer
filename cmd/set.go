@@ -28,7 +28,7 @@ Examples:
 
 func init() {
 	rootCmd.AddCommand(setCmd)
-	setCmd.Flags().StringVar(&setThemesDir, "themes-dir", "./themes/", "path to the themes directory")
+	setCmd.Flags().StringVar(&setThemesDir, "themes-dir", defaultThemesDir(), "path to the themes directory")
 }
 
 func runSet(cmd *cobra.Command, args []string) error {
