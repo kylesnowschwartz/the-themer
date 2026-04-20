@@ -35,4 +35,3 @@ color15 = "#ede3e0"   # bright white (bg)
 
 [references]
 neovim = "tekapo-sunset-light"
-claude = "light"

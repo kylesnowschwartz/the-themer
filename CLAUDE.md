@@ -47,7 +47,7 @@ Apps fall into three categories based on how the-themer handles their configs:
 
 1. **Generated** — Config derived from palette via template. Ghostty, fzf, delta, bat.
 2. **Hand-crafted** — Config lives in the themes/ directory, checked into the repo. Starship, eza, gh-dash. Too structural to auto-derive from colors alone.
-3. **Referenced** — External thing the-themer just knows the name of. Neovim colorschemes (standalone plugin repos like cobalt-neon.nvim), claude-cli ("dark"/"light").
+3. **Referenced** — External thing the-themer just knows the name of. Neovim colorschemes (standalone plugin repos like cobalt-neon.nvim). Claude Code is no longer in this set — it ships with `"auto"` theme that follows terminal ANSI, so the-themer doesn't touch `~/.claude.json`.
 
 ### Theme Directory Structure
 
@@ -92,7 +92,6 @@ accent = "#00d4ff"
 
 [references]
 neovim = "cobalt-neon"      # colorscheme name for Themery
-claude = "dark"              # claude.json theme value
 
 [adapters.fzf.palette]
 # Per-adapter palette override (completely replaces [palette] for fzf)
@@ -135,7 +134,7 @@ the-themer/
   theme/
     theme.go          # Theme type, LoadTheme, ListThemes, AppDirs
     install.go        # Install() with per-app handlers (ghostty, bat, delta, fzf, starship, eza, gh-dash)
-    switch.go         # Switch() with per-app handlers (+ neovim via Themery, claude.json edit)
+    switch.go         # Switch() with per-app handlers (+ neovim via Themery)
     state.go          # ReadState/WriteState for ~/.config/the-themer/current
     theme_test.go     # 15 integration tests: install, switch, state, references, titleCase
   themes/               # Theme warehouse
@@ -224,7 +223,6 @@ the-themer switch cobalt-next-neon --themes-dir ./themes/    # activate theme ac
 | eza | `eza/` dir exists | Symlink `~/.config/eza/theme.yml` |
 | gh-dash | `gh-dash/` dir exists | Copy to `~/.config/gh-dash/config.yml` |
 | Neovim | `references.neovim` set | Headless nvim + Themery |
-| Claude CLI | `references.claude` set | Pure Go edit of `~/.claude.json` |
 
 Active theme state recorded at `~/.config/the-themer/current`.
 

@@ -33,5 +33,4 @@ color15 = "#8ff586"  # bright white (green — matches fg)
 
 [references]
 neovim = "cobalt-neon"
-claude = "dark"
 bat = "Dracula"

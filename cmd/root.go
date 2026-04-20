@@ -9,7 +9,7 @@ var rootCmd = &cobra.Command{
 	Use:   "the-themer",
 	Short: "Terminal theme warehouse — generate, install, and switch themes",
 	Long: `the-themer manages terminal themes across multiple apps (ghostty,
-bat, delta, fzf, starship, eza, gh-dash, neovim, claude).
+bat, delta, fzf, starship, eza, gh-dash, neovim).
 
 Commands:
   generate   Render per-app configs from a palette TOML

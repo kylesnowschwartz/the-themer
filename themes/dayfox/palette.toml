@@ -36,5 +36,4 @@ color15 = "#f4ece6"  # bright white
 
 [references]
 neovim = "dayfox"
-claude = "light"
 bat = "Solarized (light)"

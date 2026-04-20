@@ -50,5 +50,4 @@ dimmed = "#6a8098"    # same as comment text
 
 [references]
 neovim = "cobalt-neon"
-claude = "dark"
 bat = "Dracula"

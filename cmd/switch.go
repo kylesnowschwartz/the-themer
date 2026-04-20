@@ -17,7 +17,7 @@ var switchCmd = &cobra.Command{
 	Long: `Switch activates a theme by updating each app's active config.
 This includes writing config pointers (theme.local, bat-theme.txt),
 swapping symlinks (starship, fzf, eza), and invoking external tools
-(nvim Themery, claude.json edit).
+(nvim Themery).
 
 Only apps configured for the theme are switched. Others are skipped.
 

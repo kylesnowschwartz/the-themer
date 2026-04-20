@@ -6,8 +6,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-
-	"github.com/tidwall/sjson"
 )
 
 // SwitchOpts configures the switch operation.
@@ -51,7 +49,6 @@ func Switch(t Theme, opts SwitchOpts) []SwitchResult {
 		{"eza", switchEza},
 		{"gh-dash", switchGhDash},
 		{"neovim", switchNeovim},
-		{"claude", switchClaude},
 	}
 
 	var results []SwitchResult
@@ -279,73 +276,6 @@ func switchNeovim(t Theme, home string) (string, error) {
 		return "", fmt.Errorf("nvim themery switch failed: %s: %w", strings.TrimSpace(string(out)), err)
 	}
 	return fmt.Sprintf("neovim -> %s", name), nil
-}
-
-// switchClaude edits ~/.claude.json to set the theme key.
-// "dark" deletes the key (dark is the default).
-// Uses sjson for surgical edits — only the theme key is touched, preserving
-// key order, formatting, and numeric precision in the rest of the file.
-// Atomic write (temp file + rename) and original permissions are preserved.
-func switchClaude(t Theme, home string) (string, error) {
-	value := t.Config.References["claude"]
-	if value == "" {
-		return "", nil
-	}
-
-	claudePath := filepath.Join(home, ".claude.json")
-
-	var origPerm os.FileMode = 0o644
-	raw, err := os.ReadFile(claudePath)
-	if err != nil {
-		if !os.IsNotExist(err) {
-			return "", fmt.Errorf("reading claude.json: %w", err)
-		}
-		// File doesn't exist — start with empty object.
-		raw = []byte("{}")
-	} else if info, err := os.Stat(claudePath); err == nil {
-		origPerm = info.Mode().Perm()
-	}
-
-	var out []byte
-	if value == "dark" {
-		out, err = sjson.DeleteBytes(raw, "theme")
-	} else {
-		out, err = sjson.SetBytes(raw, "theme", value)
-	}
-	if err != nil {
-		return "", fmt.Errorf("editing claude.json: %w", err)
-	}
-
-	// Atomic write: temp file in same directory, then rename.
-	tmpFile, err := os.CreateTemp(filepath.Dir(claudePath), ".claude.json.tmp.*")
-	if err != nil {
-		return "", fmt.Errorf("creating temp file: %w", err)
-	}
-	tmpPath := tmpFile.Name()
-
-	if _, err := tmpFile.Write(out); err != nil {
-		tmpFile.Close()
-		os.Remove(tmpPath)
-		return "", fmt.Errorf("writing temp file: %w", err)
-	}
-	if err := tmpFile.Close(); err != nil {
-		os.Remove(tmpPath)
-		return "", fmt.Errorf("closing temp file: %w", err)
-	}
-
-	if err := os.Chmod(tmpPath, origPerm); err != nil {
-		os.Remove(tmpPath)
-		return "", fmt.Errorf("setting permissions: %w", err)
-	}
-	if err := os.Rename(tmpPath, claudePath); err != nil {
-		os.Remove(tmpPath)
-		return "", err
-	}
-
-	if value == "dark" {
-		return "claude.json -> removed theme key (dark is default)", nil
-	}
-	return fmt.Sprintf("claude.json -> %s", value), nil
 }
 
 // firstFile returns the name of the first regular file in dir, or "" if empty.

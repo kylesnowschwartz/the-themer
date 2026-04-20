@@ -5,8 +5,6 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-
-	"github.com/tidwall/gjson"
 )
 
 // minimalPaletteTOML is a valid palette.toml for testing.
@@ -37,7 +35,6 @@ color15 = "#ffffff"
 
 [references]
 neovim = "test-scheme"
-claude = "dark"
 bat = "Dracula"
 `
 
@@ -269,87 +266,6 @@ func TestSwitch_StarshipSymlink(t *testing.T) {
 	}
 }
 
-func TestSwitch_ClaudeJSON_Light(t *testing.T) {
-	// Use a palette with claude = "light" reference.
-	toml := strings.Replace(minimalPaletteTOML, `claude = "dark"`, `claude = "light"`, 1)
-	themesDir, _ := setupThemeDir(t, nil, toml)
-
-	home := t.TempDir()
-	th, err := LoadTheme(themesDir, "test-theme")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	results := Switch(th, SwitchOpts{HomeDir: home})
-	checkNoErrors(t, results)
-
-	claudeJSON := filepath.Join(home, ".claude.json")
-	assertJSONKey(t, claudeJSON, "theme", "light")
-}
-
-func TestSwitch_ClaudeJSON_DarkRemovesKey(t *testing.T) {
-	themesDir, _ := setupThemeDir(t, nil, minimalPaletteTOML)
-
-	home := t.TempDir()
-	// Create an existing claude.json with a theme key.
-	writeFile(t, filepath.Join(home, ".claude.json"), `{"theme": "light", "other": "value"}`)
-
-	th, err := LoadTheme(themesDir, "test-theme")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	results := Switch(th, SwitchOpts{HomeDir: home})
-	checkNoErrors(t, results)
-
-	claudeJSON := filepath.Join(home, ".claude.json")
-	content, err := os.ReadFile(claudeJSON)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if strings.Contains(string(content), "theme") {
-		t.Errorf("claude.json should not contain theme key for dark, got: %s", content)
-	}
-	// Verify other keys are preserved.
-	if !strings.Contains(string(content), `"other"`) {
-		t.Errorf("claude.json should preserve other keys, got: %s", content)
-	}
-}
-
-func TestSwitch_ClaudeJSON_PreservesPermissions(t *testing.T) {
-	toml := strings.Replace(minimalPaletteTOML, `claude = "dark"`, `claude = "light"`, 1)
-	themesDir, _ := setupThemeDir(t, nil, toml)
-
-	home := t.TempDir()
-	claudeJSON := filepath.Join(home, ".claude.json")
-
-	// Create claude.json with non-default permissions (0o600).
-	writeFile(t, claudeJSON, `{"existing": true}`)
-	if err := os.Chmod(claudeJSON, 0o600); err != nil {
-		t.Fatal(err)
-	}
-
-	th, err := LoadTheme(themesDir, "test-theme")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	results := Switch(th, SwitchOpts{HomeDir: home})
-	checkNoErrors(t, results)
-
-	// Verify permissions were preserved.
-	info, err := os.Stat(claudeJSON)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if got := info.Mode().Perm(); got != 0o600 {
-		t.Errorf("claude.json permissions = %o, want 600", got)
-	}
-	// Verify content is correct.
-	assertJSONKey(t, claudeJSON, "theme", "light")
-	assertJSONKey(t, claudeJSON, "existing", "true")
-}
-
 func TestSwitch_ReferenceFallback_Bat(t *testing.T) {
 	// Theme with no bat/ dir but references.bat = "Dracula".
 	themesDir, _ := setupThemeDir(t, nil, minimalPaletteTOML)
@@ -517,23 +433,6 @@ func TestDefault_RoundTrip(t *testing.T) {
 }
 
 // assertFileContains reads a file and checks it contains the expected substring.
-// assertJSONKey checks that a JSON file has the given top-level key set to want.
-func assertJSONKey(t *testing.T, path, key, want string) {
-	t.Helper()
-	data, err := os.ReadFile(path)
-	if err != nil {
-		t.Fatalf("reading %s: %v", path, err)
-	}
-	result := gjson.GetBytes(data, key)
-	if !result.Exists() {
-		t.Errorf("%s: key %q not found, got:\n%s", path, key, data)
-		return
-	}
-	if result.String() != want {
-		t.Errorf("%s: key %q = %q, want %q", path, key, result.String(), want)
-	}
-}
-
 func assertFileContains(t *testing.T, path, want string) {
 	t.Helper()
 	data, err := os.ReadFile(path)
