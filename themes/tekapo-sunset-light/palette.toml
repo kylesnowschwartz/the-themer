@@ -10,6 +10,7 @@ variant = "light"
 bg = "#ede3e0"
 fg = "#1a1e26"
 cursor = "#a34d2e"
+cursor_text = "#ede3e0"  # bg — light glyph inverts cleanly over orange cursor
 selection_bg = "#c0d0e4"
 selection_fg = "#1a1e26"
 
