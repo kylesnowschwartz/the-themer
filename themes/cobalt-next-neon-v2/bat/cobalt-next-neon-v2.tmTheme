@@ -14,7 +14,7 @@
 				<key>foreground</key>
 				<string>#8ff586</string>
 				<key>caret</key>
-				<string>#c4206f</string>
+				<string>#ff6cb3</string>
 				<key>selection</key>
 				<string>#094fb1</string>
 				<key>selectionForeground</key>
@@ -26,13 +26,13 @@
 				<key>findHighlightForeground</key>
 				<string>#e8f0f8</string>
 				<key>activeGuide</key>
-				<string>#c4206f</string>
+				<string>#ff6cb3</string>
 				<key>bracketsForeground</key>
-				<string>#c4206f</string>
+				<string>#ff6cb3</string>
 				<key>bracketsOptions</key>
 				<string>underline</string>
 				<key>bracketContentsForeground</key>
-				<string>#c4206f</string>
+				<string>#ff6cb3</string>
 				<key>bracketContentsOptions</key>
 				<string>underline</string>
 				<key>tagsOptions</key>
@@ -73,7 +73,7 @@
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
-				<string>#b060d0</string>
+				<string>#cf8de8</string>
 			</dict>
 		</dict>
 		<dict>
@@ -301,7 +301,7 @@
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
-				<string>#b060d0</string>
+				<string>#cf8de8</string>
 			</dict>
 		</dict>
 		<dict>
@@ -364,7 +364,7 @@
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
-				<string>#b060d0</string>
+				<string>#cf8de8</string>
 			</dict>
 		</dict>
 		<dict>

@@ -8,9 +8,10 @@
 # - Cyan synthesized (#5fced8) instead of duplicating fg
 # - White/bright white corrected to actual neutrals
 # - Bright black lightened for comment readability
-# - Magenta pair lightened for readability (was Lc -10/-15)
+# - Magenta pair lightened for readability (was Lc -10/-15; now Lc -51/-65)
 # - Bright red lightened to clear bright-slot threshold
 # - UI overrides for error/border/dimmed to decouple from ANSI slots
+# - Cursor lightened to clear ui-element threshold (was #c4206f Lc -22.5)
 
 [theme]
 name = "cobalt-next-neon-v2"
@@ -19,7 +20,8 @@ variant = "dark"
 [palette]
 bg = "#142838"
 fg = "#8ff586"
-cursor = "#c4206f"
+cursor = "#ff6cb3"
+cursor_text = "#142838"  # bg — inverts under block cursor (was implicit FG = green-on-pink, |Lc| -34)
 selection_bg = "#094fb1"
 selection_fg = "#e8f0f8"
 
@@ -29,7 +31,7 @@ color1 = "#ff2320"    # red
 color2 = "#8ff586"    # green (the neon green — in its correct slot)
 color3 = "#e9e75c"    # yellow
 color4 = "#3ba5ff"    # blue (was in green slot!)
-color5 = "#b060d0"    # magenta — lightened from #781aa0 (Lc -10.9 -> ~-33)
+color5 = "#cf8de8"    # magenta — lightened to comfortably clear |Lc| >= 45 (was #b060d0, Lc -32.7 -> -51.1)
 color6 = "#5fced8"    # cyan — synthesized (was duplicate of fg)
 color7 = "#b0c4d8"    # white — cool grey (was #ba46b2 magenta!)
 
@@ -39,7 +41,7 @@ color9 = "#ff6b6b"    # bright red — lightened to clear |Lc| >= 45
 color10 = "#8ff586"   # bright green
 color11 = "#e9f06d"   # bright yellow
 color12 = "#5ba8ff"   # bright blue
-color13 = "#c880e0"   # bright magenta — lightened from #8230a7
+color13 = "#e0adef"   # bright magenta — lifted in proportion (was #c880e0, Lc -45.7 -> -64.8)
 color14 = "#7ee8f2"   # bright cyan (from cobalt-neon.nvim)
 color15 = "#e8f0f8"   # bright white (was #8ff586 green!)
 

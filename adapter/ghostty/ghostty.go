@@ -44,7 +44,7 @@ palette = {{$i}}={{$c}}{{end}}
 background = {{.Palette.BG}}
 foreground = {{.Palette.FG}}
 cursor-color = {{.Palette.Cursor}}
-cursor-text = {{.Palette.FG}}
+cursor-text = {{.Palette.CursorText}}
 selection-background = {{.Palette.SelectionBG}}
 selection-foreground = {{.Palette.SelectionFG}}
 

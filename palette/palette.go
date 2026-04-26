@@ -49,6 +49,7 @@ type PaletteColors struct {
 	BG          string `toml:"bg"`
 	FG          string `toml:"fg"`
 	Cursor      string `toml:"cursor"`
+	CursorText  string `toml:"cursor_text"` // text color drawn over a block cursor; defaults to FG (preserves legacy behavior; set to BG for inverted/standard)
 	SelectionBG string `toml:"selection_bg"`
 	SelectionFG string `toml:"selection_fg"`
 
@@ -148,6 +149,9 @@ func (c *Config) ApplyDefaults() {
 	if p.Cursor == "" {
 		p.Cursor = p.Color4
 	}
+	if p.CursorText == "" {
+		p.CursorText = p.FG
+	}
 	if p.SelectionBG == "" {
 		p.SelectionBG = p.Color8
 	}
@@ -241,6 +245,7 @@ func (c *Config) Validate() error {
 		value string
 	}{
 		{"palette.cursor", c.Palette.Cursor},
+		{"palette.cursor_text", c.Palette.CursorText},
 		{"palette.selection_bg", c.Palette.SelectionBG},
 		{"palette.selection_fg", c.Palette.SelectionFG},
 		{"palette.ui.border", c.Palette.UI.Border},

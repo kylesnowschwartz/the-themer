@@ -6,3 +6,4 @@ the-themer
 
 # Cloned reference repos
 .cloned-sources/
+scripts/__pycache__/

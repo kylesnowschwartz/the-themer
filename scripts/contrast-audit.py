@@ -316,6 +316,7 @@ class Palette:
     bg: str = ""
     fg: str = ""
     cursor: str = ""
+    cursor_text: str = ""
     selection_bg: str = ""
     selection_fg: str = ""
 
@@ -356,6 +357,7 @@ def load_palette(path: str) -> Palette:
         bg=pal.get("bg", ""),
         fg=pal.get("fg", ""),
         cursor=pal.get("cursor", ""),
+        cursor_text=pal.get("cursor_text", ""),
         selection_bg=pal.get("selection_bg", ""),
         selection_fg=pal.get("selection_fg", ""),
         ui_border=ui.get("border", ""),
@@ -378,6 +380,8 @@ def load_palette(path: str) -> Palette:
     # Apply defaults (mirrors Go's ApplyDefaults)
     if not p.cursor:
         p.cursor = p.colors.get(4, "")
+    if not p.cursor_text:
+        p.cursor_text = p.fg
     if not p.selection_bg:
         p.selection_bg = p.colors.get(8, "")
     if not p.selection_fg:
@@ -417,6 +421,7 @@ def load_palette(path: str) -> Palette:
             bg=override_pal.get("bg", ""),
             fg=override_pal.get("fg", ""),
             cursor=override_pal.get("cursor", ""),
+            cursor_text=override_pal.get("cursor_text", ""),
             selection_bg=override_pal.get("selection_bg", ""),
             selection_fg=override_pal.get("selection_fg", ""),
             ui_border=override_ui.get("border", ""),
@@ -435,6 +440,8 @@ def load_palette(path: str) -> Palette:
         # Apply defaults for override
         if not op.cursor:
             op.cursor = op.colors.get(4, "")
+        if not op.cursor_text:
+            op.cursor_text = op.fg
         if not op.selection_bg:
             op.selection_bg = op.colors.get(8, "")
         if not op.selection_fg:
@@ -752,7 +759,9 @@ def audit_cross_context(pal: Palette) -> list[ContrastResult]:
 
     pairs = [
         ("selection_fg on selection_bg", pal.selection_fg, pal.selection_bg, "body"),
-        ("fg on cursor (block)", pal.fg, pal.cursor, "body"),
+        # Cursor text is brief (single char under a moving cursor), not body text.
+        # ui-element threshold (|Lc| >= 45) is appropriate for transient glyphs.
+        ("cursor_text on cursor (block)", pal.cursor_text, pal.cursor, "ui-element"),
         ("cursor on bg", pal.cursor, pal.bg, "ui-element"),
     ]
 

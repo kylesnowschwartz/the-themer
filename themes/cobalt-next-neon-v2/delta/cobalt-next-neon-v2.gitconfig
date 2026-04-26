@@ -19,4 +19,4 @@
 	line-numbers-right-style = "#6a8098"
 	line-numbers-zero-style = "#6a8098"
 	zero-style = "syntax"
-	whitespace-error-style = "reverse #b060d0"
+	whitespace-error-style = "reverse #cf8de8"
