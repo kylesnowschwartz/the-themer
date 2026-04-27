@@ -224,7 +224,7 @@ the-themer switch cobalt-next-neon --themes-dir ./themes/    # activate theme ac
 | bat | `bat/` dir or `references.bat` | Write theme name to `~/.config/bat-theme.txt` |
 | Delta | `delta/` dir or `references.delta` | Write feature name to `~/.config/delta-theme.txt` |
 | fzf | `fzf/` dir exists | Symlink `~/.config/the-themer/fzf/current.zsh` |
-| opensessions | `opensessions/` dir exists | Symlink `~/.config/opensessions/active-theme.json` |
+| opensessions | `opensessions/` dir exists | Atomic write of `~/.config/opensessions/active-theme.json` (write-tmp + rename, fires fs.watch reliably) |
 | Starship | `starship/` dir exists | Symlink `~/.config/starship.toml` |
 | eza | `eza/` dir exists | Symlink `~/.config/eza/theme.yml` |
 | gh-dash | `gh-dash/` dir exists | Copy to `~/.config/gh-dash/config.yml` |

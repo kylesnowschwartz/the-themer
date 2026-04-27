@@ -188,10 +188,14 @@ func switchFzf(t Theme, home string) (string, error) {
 	return fmt.Sprintf("fzf/current.zsh -> %s", srcFile), nil
 }
 
-// switchOpensessions symlinks ~/.config/opensessions/active-theme.json
-// to the installed opensessions config for this theme. Opensessions watches
-// active-theme.json via fs.watch and reloads atomically (the rename trick),
-// so the panel + tmux header swap colours within a frame.
+// switchOpensessions atomically writes ~/.config/opensessions/active-theme.json
+// with the installed theme JSON's contents. We deliberately do NOT symlink:
+// opensessions watches the file via fs.watch, and on macOS fs.watch follows
+// symlinks to the resolved target — swapping the symlink to a different file
+// (whose content didn't change) doesn't fire the watcher. The brief calls
+// this out: "Atomic writes (rename trick) are detected." So we write to a
+// sibling .tmp file and rename onto active-theme.json; rename is atomic on
+// the same filesystem and reliably triggers fs.watch.
 func switchOpensessions(t Theme, home string) (string, error) {
 	osDir := filepath.Join(t.Dir, "opensessions")
 	if !dirExists(osDir) {
@@ -204,16 +208,29 @@ func switchOpensessions(t Theme, home string) (string, error) {
 	}
 
 	installedFile := filepath.Join(home, ".config", "opensessions", srcFile)
-	link := filepath.Join(home, ".config", "opensessions", "active-theme.json")
+	dest := filepath.Join(home, ".config", "opensessions", "active-theme.json")
+	tmp := dest + ".tmp"
 
-	if err := os.MkdirAll(filepath.Dir(link), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
 		return "", err
 	}
-	os.Remove(link)
-	if err := os.Symlink(installedFile, link); err != nil {
+
+	// Read the installed source. Required because dest may currently be a
+	// symlink (from the previous symlink-based implementation); we want to
+	// land a regular file at dest so fs.watch tracks it directly.
+	data, err := os.ReadFile(installedFile)
+	if err != nil {
+		return "", fmt.Errorf("reading %s: %w", installedFile, err)
+	}
+
+	if err := os.WriteFile(tmp, data, 0o644); err != nil {
 		return "", err
 	}
-	return fmt.Sprintf("opensessions/active-theme.json -> %s", srcFile), nil
+	if err := os.Rename(tmp, dest); err != nil {
+		os.Remove(tmp)
+		return "", err
+	}
+	return fmt.Sprintf("opensessions/active-theme.json <- %s (atomic write)", srcFile), nil
 }
 
 // switchStarship symlinks ~/.config/starship.toml to the installed starship config.
