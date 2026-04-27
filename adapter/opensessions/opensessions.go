@@ -11,13 +11,17 @@
 //	  "variant": "light" | "dark",
 //	  "palette": {
 //	    "text": "#...", "subtext0": "#...", ...,
-//	    "base": "transparent", "mantle": "transparent", "crust": "transparent"
+//	    "base": "#...", "mantle": "#...", "crust": "#..."
 //	  }
 //	}
 //
 // The 21 palette tokens are derived from palette.toml per the table in
-// CLAUDE.md (Switch Mechanisms / opensessions). Background tiers default to
-// the literal string "transparent" so the panel inherits Ghostty's bg.
+// CLAUDE.md (Switch Mechanisms / opensessions). Background tiers (base/
+// mantle/crust) emit the palette's bg hex so the panel matches Ghostty's bg
+// at switch time. The original contract specified the literal "transparent"
+// for these tokens but OpenTUI's transparent rendering (PR #932) doesn't yet
+// reach the panel's outer container; emitting hex avoids a black panel under
+// light themes.
 package opensessions
 
 import (
@@ -71,10 +75,15 @@ type osTheme struct {
 	Palette osPalette `json:"palette"`
 }
 
-// transparent is the literal value emitted for base/mantle/crust so the panel
-// inherits the terminal's background. Themes wanting opaque backgrounds can
-// override via [adapters.opensessions.palette].
-const transparent = "transparent"
+// Background tiers (base/mantle/crust) emit the palette's bg hex rather than
+// the literal "transparent" the JSON contract documents. OpenTUI's transparent
+// support (upstream PR #932) only handles BoxRenderable bg/border, and the
+// opensessions panel's outer container falls through to a builtin dark default
+// when given "transparent" — manifesting as a black panel under light themes.
+// Emitting bg hex gives an opaque panel that matches Ghostty's bg colour at
+// switch time. Once OpenTUI's transparent handling is plumbed through the panel
+// renderable, this can revert to the literal "transparent" per the original
+// contract.
 
 func (o *opensessionsAdapter) Generate(cfg palette.Config) ([]byte, error) {
 	p := cfg.Palette // post-ApplyDefaults: every UI/Selection field is populated.
@@ -110,9 +119,9 @@ func (o *opensessionsAdapter) Generate(cfg palette.Config) ([]byte, error) {
 			Surface0: p.SelectionBG,
 			Surface1: p.SelectionBG,
 			Surface2: p.Color8,
-			Base:     transparent,
-			Mantle:   transparent,
-			Crust:    transparent,
+			Base:     p.BG,
+			Mantle:   p.BG,
+			Crust:    p.BG,
 		},
 	}
 

@@ -20,8 +20,8 @@
     "surface0": "#d8dae1",
     "surface1": "#d8dae1",
     "surface2": "#6c6f85",
-    "base": "transparent",
-    "mantle": "transparent",
-    "crust": "transparent"
+    "base": "#eff1f5",
+    "mantle": "#eff1f5",
+    "crust": "#eff1f5"
   }
 }
