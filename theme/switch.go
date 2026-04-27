@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -91,7 +92,48 @@ func switchGhostty(t Theme, home string) (string, error) {
 	if err := os.WriteFile(dest, []byte(content), 0o644); err != nil {
 		return "", err
 	}
-	return fmt.Sprintf("theme.local -> %s", themeFile), nil
+	msg := fmt.Sprintf("theme.local -> %s", themeFile)
+	if nudge := nudgeGhosttyReload(); nudge != "" {
+		msg += "; " + nudge
+	}
+	return msg, nil
+}
+
+// nudgeGhosttyReload sends Cmd+Shift+R via System Events on macOS so a
+// running Ghostty picks up theme.local without manual intervention. Best-
+// effort: if Ghostty isn't running, osascript is missing, the platform
+// isn't macOS, or TCC denies the action, the function silently returns ""
+// and the switch result still reports success.
+//
+// Why osascript and not an IPC call: Ghostty's macOS build has no CLI->
+// running-app channel (`ghostty +new-window` reports "not supported on
+// this platform"), so we drive the existing reload_config keybind via
+// AppleScript. Requires Ghostty to be granted Automation → System Events
+// in System Settings → Privacy & Security; first invocation triggers the
+// TCC prompt.
+func nudgeGhosttyReload() string {
+	if runtime.GOOS != "darwin" {
+		return ""
+	}
+	osa, err := exec.LookPath("osascript")
+	if err != nil {
+		return ""
+	}
+	// Don't launch Ghostty just to reload it.
+	check := exec.Command(osa, "-e", `application id "com.mitchellh.ghostty" is running`)
+	out, err := check.Output()
+	if err != nil || strings.TrimSpace(string(out)) != "true" {
+		return ""
+	}
+	// activate brings Ghostty to focus so the keystroke lands in it. In the
+	// common case (running `theme` from a Ghostty terminal) Ghostty is
+	// already frontmost, so activate is a visual no-op.
+	script := `tell application id "com.mitchellh.ghostty" to activate
+tell application "System Events" to keystroke "r" using {command down, shift down}`
+	if err := exec.Command(osa, "-e", script).Run(); err != nil {
+		return fmt.Sprintf("reload nudge failed: %v", err)
+	}
+	return "reloaded"
 }
 
 // switchBat writes the bat theme name to bat-theme.txt.
