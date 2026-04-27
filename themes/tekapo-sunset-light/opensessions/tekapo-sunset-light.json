@@ -1,0 +1,27 @@
+{
+  "name": "tekapo-sunset-light",
+  "variant": "light",
+  "palette": {
+    "text": "#1a1e26",
+    "subtext0": "#5c687b",
+    "subtext1": "#5c687b",
+    "overlay0": "#5c687b",
+    "overlay1": "#5c687b",
+    "blue": "#416895",
+    "lavender": "#87586b",
+    "pink": "#87586b",
+    "mauve": "#87586b",
+    "yellow": "#9c7826",
+    "green": "#556c4b",
+    "red": "#a34d2e",
+    "peach": "#9c7826",
+    "teal": "#426c74",
+    "sky": "#426c74",
+    "surface0": "#c0d0e4",
+    "surface1": "#c0d0e4",
+    "surface2": "#5c687b",
+    "base": "transparent",
+    "mantle": "transparent",
+    "crust": "transparent"
+  }
+}

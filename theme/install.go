@@ -48,6 +48,7 @@ func Install(t Theme, opts InstallOpts) []InstallResult {
 		{"bat", installBat},
 		{"delta", installDelta},
 		{"fzf", installFzf},
+		{"opensessions", installOpensessions},
 		{"starship", installStarship},
 		{"eza", installEza},
 		{"gh-dash", installGhDash},
@@ -172,6 +173,15 @@ func gitAddIncludePath(path string) error {
 func installFzf(t Theme, home string) (string, error) {
 	srcDir := filepath.Join(t.Dir, "fzf")
 	destDir := filepath.Join(home, ".config", "the-themer", "fzf")
+	return copyDirContents(srcDir, destDir)
+}
+
+// installOpensessions copies the generated theme JSON to ~/.config/opensessions/.
+// The matching switch handler symlinks active-theme.json to the installed file,
+// which opensessions watches via fs.watch and reloads on rename.
+func installOpensessions(t Theme, home string) (string, error) {
+	srcDir := filepath.Join(t.Dir, "opensessions")
+	destDir := filepath.Join(home, ".config", "opensessions")
 	return copyDirContents(srcDir, destDir)
 }
 

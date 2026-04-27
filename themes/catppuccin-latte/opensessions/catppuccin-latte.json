@@ -1,0 +1,27 @@
+{
+  "name": "catppuccin-latte",
+  "variant": "light",
+  "palette": {
+    "text": "#4c4f69",
+    "subtext0": "#6c6f85",
+    "subtext1": "#6c6f85",
+    "overlay0": "#6c6f85",
+    "overlay1": "#6c6f85",
+    "blue": "#1e66f5",
+    "lavender": "#ea76cb",
+    "pink": "#ea76cb",
+    "mauve": "#ea76cb",
+    "yellow": "#df8e1d",
+    "green": "#40a02b",
+    "red": "#d20f39",
+    "peach": "#df8e1d",
+    "teal": "#179299",
+    "sky": "#179299",
+    "surface0": "#d8dae1",
+    "surface1": "#d8dae1",
+    "surface2": "#6c6f85",
+    "base": "transparent",
+    "mantle": "transparent",
+    "crust": "transparent"
+  }
+}

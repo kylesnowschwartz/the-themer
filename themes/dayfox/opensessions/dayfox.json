@@ -1,0 +1,27 @@
+{
+  "name": "dayfox",
+  "variant": "light",
+  "palette": {
+    "text": "#3d2b5a",
+    "subtext0": "#534c45",
+    "subtext1": "#534c45",
+    "overlay0": "#534c45",
+    "overlay1": "#534c45",
+    "blue": "#2848a9",
+    "lavender": "#6e33ce",
+    "pink": "#6e33ce",
+    "mauve": "#6e33ce",
+    "yellow": "#ac5402",
+    "green": "#396847",
+    "red": "#a5222f",
+    "peach": "#ac5402",
+    "teal": "#287980",
+    "sky": "#287980",
+    "surface0": "#e7d2be",
+    "surface1": "#e7d2be",
+    "surface2": "#534c45",
+    "base": "transparent",
+    "mantle": "transparent",
+    "crust": "transparent"
+  }
+}

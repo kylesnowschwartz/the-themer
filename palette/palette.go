@@ -99,6 +99,14 @@ type Config struct {
 	Palette    PaletteColors            `toml:"palette"`
 	Adapters   map[string]AdapterConfig `toml:"adapters"`
 	References map[string]string        `toml:"references"`
+
+	// RawPalette holds a snapshot of the user-supplied palette taken before
+	// ApplyDefaults populates any missing fields. Adapters whose token mapping
+	// has its own fallback chain (different from the global ApplyDefaults rules)
+	// can use this to detect whether a field was explicitly set vs. defaulted.
+	// The opensessions adapter uses it for the "blue" token, where the spec
+	// fallback is color4 instead of UI.Accent's standard color6 default.
+	RawPalette PaletteColors `toml:"-"`
 }
 
 // ValidationErrors collects multiple validation failures.
@@ -143,6 +151,10 @@ func Parse(data []byte) (Config, error) {
 // ApplyDefaults fills zero-value optional fields with values derived from
 // the ANSI palette. It does not overwrite explicitly set values.
 func (c *Config) ApplyDefaults() {
+	// Snapshot user-supplied palette before any defaults are populated. Adapters
+	// with adapter-specific fallback chains (e.g. opensessions's "blue" token)
+	// read this to distinguish explicit values from default-derived ones.
+	c.RawPalette = c.Palette
 	p := &c.Palette
 
 	// Palette-level defaults

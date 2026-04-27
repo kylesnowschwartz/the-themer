@@ -45,6 +45,7 @@ func Switch(t Theme, opts SwitchOpts) []SwitchResult {
 		{"bat", switchBat},
 		{"delta", switchDelta},
 		{"fzf", switchFzf},
+		{"opensessions", switchOpensessions},
 		{"starship", switchStarship},
 		{"eza", switchEza},
 		{"gh-dash", switchGhDash},
@@ -185,6 +186,34 @@ func switchFzf(t Theme, home string) (string, error) {
 		return "", err
 	}
 	return fmt.Sprintf("fzf/current.zsh -> %s", srcFile), nil
+}
+
+// switchOpensessions symlinks ~/.config/opensessions/active-theme.json
+// to the installed opensessions config for this theme. Opensessions watches
+// active-theme.json via fs.watch and reloads atomically (the rename trick),
+// so the panel + tmux header swap colours within a frame.
+func switchOpensessions(t Theme, home string) (string, error) {
+	osDir := filepath.Join(t.Dir, "opensessions")
+	if !dirExists(osDir) {
+		return "", nil
+	}
+
+	srcFile, err := firstFile(osDir)
+	if err != nil || srcFile == "" {
+		return "", err
+	}
+
+	installedFile := filepath.Join(home, ".config", "opensessions", srcFile)
+	link := filepath.Join(home, ".config", "opensessions", "active-theme.json")
+
+	if err := os.MkdirAll(filepath.Dir(link), 0o755); err != nil {
+		return "", err
+	}
+	os.Remove(link)
+	if err := os.Symlink(installedFile, link); err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("opensessions/active-theme.json -> %s", srcFile), nil
 }
 
 // switchStarship symlinks ~/.config/starship.toml to the installed starship config.

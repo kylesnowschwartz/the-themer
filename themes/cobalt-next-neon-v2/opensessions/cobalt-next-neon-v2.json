@@ -1,0 +1,27 @@
+{
+  "name": "cobalt-next-neon-v2",
+  "variant": "dark",
+  "palette": {
+    "text": "#8ff586",
+    "subtext0": "#6a8098",
+    "subtext1": "#6a8098",
+    "overlay0": "#6a8098",
+    "overlay1": "#6a8098",
+    "blue": "#3ba5ff",
+    "lavender": "#cf8de8",
+    "pink": "#cf8de8",
+    "mauve": "#cf8de8",
+    "yellow": "#e9e75c",
+    "green": "#8ff586",
+    "red": "#ff6b6b",
+    "peach": "#e9e75c",
+    "teal": "#5fced8",
+    "sky": "#5fced8",
+    "surface0": "#094fb1",
+    "surface1": "#094fb1",
+    "surface2": "#6a8098",
+    "base": "transparent",
+    "mantle": "transparent",
+    "crust": "transparent"
+  }
+}

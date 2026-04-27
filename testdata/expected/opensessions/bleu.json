@@ -1,0 +1,27 @@
+{
+  "name": "bleu",
+  "variant": "dark",
+  "palette": {
+    "text": "#e0ecf4",
+    "subtext0": "#708090",
+    "subtext1": "#708090",
+    "overlay0": "#2d4a6b",
+    "overlay1": "#2d4a6b",
+    "blue": "#00d4ff",
+    "lavender": "#87ceeb",
+    "pink": "#87ceeb",
+    "mauve": "#87ceeb",
+    "yellow": "#FDBD85",
+    "green": "#99FFE4",
+    "red": "#A167A5",
+    "peach": "#FDBD85",
+    "teal": "#6bb6d6",
+    "sky": "#6bb6d6",
+    "surface0": "#2d4a6b",
+    "surface1": "#2d4a6b",
+    "surface2": "#2d4a6b",
+    "base": "transparent",
+    "mantle": "transparent",
+    "crust": "transparent"
+  }
+}

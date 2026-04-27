@@ -1,0 +1,27 @@
+{
+  "name": "tekapo-sunset-dark",
+  "variant": "dark",
+  "palette": {
+    "text": "#e4d8c8",
+    "subtext0": "#758298",
+    "subtext1": "#758298",
+    "overlay0": "#758298",
+    "overlay1": "#758298",
+    "blue": "#5c84b2",
+    "lavender": "#a37487",
+    "pink": "#a37487",
+    "mauve": "#a37487",
+    "yellow": "#c49b49",
+    "green": "#6d8962",
+    "red": "#c56745",
+    "peach": "#c49b49",
+    "teal": "#5f8d95",
+    "sky": "#5f8d95",
+    "surface0": "#362e52",
+    "surface1": "#362e52",
+    "surface2": "#758298",
+    "base": "transparent",
+    "mantle": "transparent",
+    "crust": "transparent"
+  }
+}
