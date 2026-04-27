@@ -1,7 +1,8 @@
 # the-themer development commands
 
-# Run all checks: vet + tests
-check: vet test
+# Run all checks: vet + tests + rebuild binary so `theme <name>` shell alias
+# (which calls ./the-themer directly) picks up code changes immediately.
+check: vet test build
 
 # Build the binary
 build:
