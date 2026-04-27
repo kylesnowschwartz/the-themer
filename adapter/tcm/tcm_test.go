@@ -1,4 +1,4 @@
-package opensessions_test
+package tcm_test
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/kylesnowschwartz/the-themer/adapter"
-	_ "github.com/kylesnowschwartz/the-themer/adapter/opensessions"
+	_ "github.com/kylesnowschwartz/the-themer/adapter/tcm"
 	"github.com/kylesnowschwartz/the-themer/palette"
 )
 
@@ -16,17 +16,17 @@ func TestGenerate_OracleBleu(t *testing.T) {
 		t.Fatalf("Load bleu.toml: %v", err)
 	}
 
-	osns := adapter.ByName([]string{"opensessions"})
-	if len(osns) != 1 {
-		t.Fatalf("expected 1 opensessions adapter, got %d", len(osns))
+	tcms := adapter.ByName([]string{"tcm"})
+	if len(tcms) != 1 {
+		t.Fatalf("expected 1 tcm adapter, got %d", len(tcms))
 	}
 
-	got, err := osns[0].Generate(cfg)
+	got, err := tcms[0].Generate(cfg)
 	if err != nil {
 		t.Fatalf("Generate: %v", err)
 	}
 
-	expected, err := os.ReadFile("../../testdata/expected/opensessions/bleu.json")
+	expected, err := os.ReadFile("../../testdata/expected/tcm/bleu.json")
 	if err != nil {
 		t.Fatalf("reading expected fixture: %v", err)
 	}
@@ -41,10 +41,10 @@ func TestAdapterRegistration(t *testing.T) {
 
 	found := false
 	for _, a := range all {
-		if a.Name() == "opensessions" {
+		if a.Name() == "tcm" {
 			found = true
-			if a.DirName() != "opensessions" {
-				t.Errorf("DirName: got %q, want %q", a.DirName(), "opensessions")
+			if a.DirName() != "tcm" {
+				t.Errorf("DirName: got %q, want %q", a.DirName(), "tcm")
 			}
 			if a.FileName("bleu") != "bleu.json" {
 				t.Errorf("FileName: got %q, want %q", a.FileName("bleu"), "bleu.json")
@@ -52,14 +52,14 @@ func TestAdapterRegistration(t *testing.T) {
 		}
 	}
 	if !found {
-		t.Fatal("opensessions adapter not registered")
+		t.Fatal("tcm adapter not registered")
 	}
 }
 
-// TestGenerate_AdapterOverride ensures the [adapters.opensessions.palette]
-// override path goes through ApplyDefaults + Validate just like the input
-// palette. We synthesize a Config with only opensessions tokens overridden
-// and verify the generated JSON reflects those overrides.
+// TestGenerate_AdapterOverride ensures the [adapters.tcm.palette] override
+// path goes through ApplyDefaults + Validate just like the input palette.
+// We synthesize a Config with only tcm tokens overridden and verify the
+// generated JSON reflects those overrides.
 func TestGenerate_AdapterOverride(t *testing.T) {
 	cfg, err := palette.Load("../../testdata/bleu.toml")
 	if err != nil {
@@ -69,7 +69,7 @@ func TestGenerate_AdapterOverride(t *testing.T) {
 	// Synthesize an override that only changes a few tokens. The full
 	// palette is required (Validate enforces all 16 ANSI + bg/fg).
 	override := cfg.Palette
-	override.UI.Accent = "#123456" // changes opensessions "blue"
+	override.UI.Accent = "#123456" // changes tcm "blue"
 	override.UI.Warning = "#abcdef"
 
 	adapterCfg := palette.Config{
@@ -81,8 +81,8 @@ func TestGenerate_AdapterOverride(t *testing.T) {
 		t.Fatalf("override validation: %v", err)
 	}
 
-	osns := adapter.ByName([]string{"opensessions"})
-	got, err := osns[0].Generate(adapterCfg)
+	tcms := adapter.ByName([]string{"tcm"})
+	got, err := tcms[0].Generate(adapterCfg)
 	if err != nil {
 		t.Fatalf("Generate: %v", err)
 	}

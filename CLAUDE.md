@@ -33,7 +33,7 @@ You start every session with amnesia. This file and `/load-dev` are your lifelin
 | 4. Theme warehouse structure | **Done** | themes/ directory, palette TOMLs, bat adapter with [palette.syntax], generated + hand-crafted configs |
 | 5. Install + Switch commands | **Done** | `install` deploys to filesystem, `switch` activates theme across apps, theme/ package |
 | 6. Polish & ship | Not started | Error UX, additional adapters, README |
-| 7. opensessions adapter | **Done** | JSON theme contract for opensessions panel + tmux header (atomic-rename watch, transparent backgrounds) |
+| 7. tcm adapter | **Done** | JSON theme contract for tail-claude-mux ("tcm") panel + tmux header (atomic-rename watch, transparent backgrounds) |
 
 ## Architecture
 
@@ -132,12 +132,12 @@ the-themer/
     delta/
       delta.go        # delta adapter: gitconfig [delta "<name>"] section
       delta_test.go   # Oracle test + registration test
-    opensessions/
-      opensessions.go      # opensessions adapter: encoding/json, 21-token panel/tmux palette
-      opensessions_test.go # Oracle test + registration + adapter-override propagation
+    tcm/
+      tcm.go            # tcm (tail-claude-mux) adapter: encoding/json, 21-token panel/tmux palette
+      tcm_test.go       # Oracle test + registration + adapter-override propagation
   theme/
     theme.go          # Theme type, LoadTheme, ListThemes, AppDirs
-    install.go        # Install() with per-app handlers (ghostty, bat, delta, fzf, opensessions, starship, eza, gh-dash)
+    install.go        # Install() with per-app handlers (ghostty, bat, delta, fzf, tcm, starship, eza, gh-dash)
     switch.go         # Switch() with per-app handlers (+ neovim via Themery)
     state.go          # ReadState/WriteState for ~/.config/the-themer/current
     theme_test.go     # 15 integration tests: install, switch, state, references, titleCase
@@ -211,7 +211,7 @@ the-themer switch cobalt-next-neon --themes-dir ./themes/    # activate theme ac
 | bat | `$(bat --config-dir)/themes/` + cache rebuild |
 | Delta | `~/.config/the-themer/delta/` + git include.path |
 | fzf | `~/.config/the-themer/fzf/` |
-| opensessions | `~/.config/opensessions/` |
+| tcm (tail-claude-mux) | `~/.config/tcm/` |
 | Starship | `~/.config/the-themer/starship/` |
 | eza | `~/.config/eza/themes/` |
 | gh-dash | `~/.config/the-themer/gh-dash/` |
@@ -224,7 +224,7 @@ the-themer switch cobalt-next-neon --themes-dir ./themes/    # activate theme ac
 | bat | `bat/` dir or `references.bat` | Write theme name to `~/.config/bat-theme.txt` |
 | Delta | `delta/` dir or `references.delta` | Write feature name to `~/.config/delta-theme.txt` |
 | fzf | `fzf/` dir exists | Symlink `~/.config/the-themer/fzf/current.zsh` |
-| opensessions | `opensessions/` dir exists | Atomic write of `~/.config/opensessions/active-theme.json` (write-tmp + rename, fires fs.watch reliably) |
+| tcm (tail-claude-mux) | `tcm/` dir exists | Atomic write of `~/.config/tcm/active-theme.json` (write-tmp + rename, fires fs.watch reliably) |
 | Starship | `starship/` dir exists | Symlink `~/.config/starship.toml` |
 | eza | `eza/` dir exists | Symlink `~/.config/eza/theme.yml` |
 | gh-dash | `gh-dash/` dir exists | Copy to `~/.config/gh-dash/config.yml` |

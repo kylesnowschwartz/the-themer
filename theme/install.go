@@ -48,7 +48,7 @@ func Install(t Theme, opts InstallOpts) []InstallResult {
 		{"bat", installBat},
 		{"delta", installDelta},
 		{"fzf", installFzf},
-		{"opensessions", installOpensessions},
+		{"tcm", installTCM},
 		{"starship", installStarship},
 		{"eza", installEza},
 		{"gh-dash", installGhDash},
@@ -176,12 +176,12 @@ func installFzf(t Theme, home string) (string, error) {
 	return copyDirContents(srcDir, destDir)
 }
 
-// installOpensessions copies the generated theme JSON to ~/.config/opensessions/.
-// The matching switch handler symlinks active-theme.json to the installed file,
-// which opensessions watches via fs.watch and reloads on rename.
-func installOpensessions(t Theme, home string) (string, error) {
-	srcDir := filepath.Join(t.Dir, "opensessions")
-	destDir := filepath.Join(home, ".config", "opensessions")
+// installTCM copies the generated theme JSON to ~/.config/tcm/.
+// The matching switch handler atomically writes active-theme.json from the
+// installed file, which tcm watches via fs.watch and reloads on rename.
+func installTCM(t Theme, home string) (string, error) {
+	srcDir := filepath.Join(t.Dir, "tcm")
+	destDir := filepath.Join(home, ".config", "tcm")
 	return copyDirContents(srcDir, destDir)
 }
 

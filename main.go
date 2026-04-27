@@ -11,7 +11,7 @@ import (
 	_ "github.com/kylesnowschwartz/the-themer/adapter/delta"
 	_ "github.com/kylesnowschwartz/the-themer/adapter/fzf"
 	_ "github.com/kylesnowschwartz/the-themer/adapter/ghostty"
-	_ "github.com/kylesnowschwartz/the-themer/adapter/opensessions"
+	_ "github.com/kylesnowschwartz/the-themer/adapter/tcm"
 )
 
 func main() {

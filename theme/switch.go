@@ -45,7 +45,7 @@ func Switch(t Theme, opts SwitchOpts) []SwitchResult {
 		{"bat", switchBat},
 		{"delta", switchDelta},
 		{"fzf", switchFzf},
-		{"opensessions", switchOpensessions},
+		{"tcm", switchTCM},
 		{"starship", switchStarship},
 		{"eza", switchEza},
 		{"gh-dash", switchGhDash},
@@ -188,27 +188,27 @@ func switchFzf(t Theme, home string) (string, error) {
 	return fmt.Sprintf("fzf/current.zsh -> %s", srcFile), nil
 }
 
-// switchOpensessions atomically writes ~/.config/opensessions/active-theme.json
-// with the installed theme JSON's contents. We deliberately do NOT symlink:
-// opensessions watches the file via fs.watch, and on macOS fs.watch follows
-// symlinks to the resolved target — swapping the symlink to a different file
-// (whose content didn't change) doesn't fire the watcher. The brief calls
-// this out: "Atomic writes (rename trick) are detected." So we write to a
-// sibling .tmp file and rename onto active-theme.json; rename is atomic on
-// the same filesystem and reliably triggers fs.watch.
-func switchOpensessions(t Theme, home string) (string, error) {
-	osDir := filepath.Join(t.Dir, "opensessions")
-	if !dirExists(osDir) {
+// switchTCM atomically writes ~/.config/tcm/active-theme.json with the
+// installed theme JSON's contents. We deliberately do NOT symlink: tcm
+// watches the file via fs.watch, and on macOS fs.watch follows symlinks to
+// the resolved target — swapping the symlink to a different file (whose
+// content didn't change) doesn't fire the watcher. The brief calls this out:
+// "Atomic writes (rename trick) are detected." So we write to a sibling .tmp
+// file and rename onto active-theme.json; rename is atomic on the same
+// filesystem and reliably triggers fs.watch.
+func switchTCM(t Theme, home string) (string, error) {
+	tcmDir := filepath.Join(t.Dir, "tcm")
+	if !dirExists(tcmDir) {
 		return "", nil
 	}
 
-	srcFile, err := firstFile(osDir)
+	srcFile, err := firstFile(tcmDir)
 	if err != nil || srcFile == "" {
 		return "", err
 	}
 
-	installedFile := filepath.Join(home, ".config", "opensessions", srcFile)
-	dest := filepath.Join(home, ".config", "opensessions", "active-theme.json")
+	installedFile := filepath.Join(home, ".config", "tcm", srcFile)
+	dest := filepath.Join(home, ".config", "tcm", "active-theme.json")
 	tmp := dest + ".tmp"
 
 	if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
@@ -230,7 +230,7 @@ func switchOpensessions(t Theme, home string) (string, error) {
 		os.Remove(tmp)
 		return "", err
 	}
-	return fmt.Sprintf("opensessions/active-theme.json <- %s (atomic write)", srcFile), nil
+	return fmt.Sprintf("tcm/active-theme.json <- %s (atomic write)", srcFile), nil
 }
 
 // switchStarship symlinks ~/.config/starship.toml to the installed starship config.
