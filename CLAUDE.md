@@ -34,6 +34,8 @@ You start every session with amnesia. This file and `/load-dev` are your lifelin
 | 5. Install + Switch commands | **Done** | `install` deploys to filesystem, `switch` activates theme across apps, theme/ package |
 | 6. Polish & ship | Not started | Error UX, additional adapters, README |
 | 7. tcm adapter | **Done** | JSON theme contract for tail-claude-mux ("tcm") panel + tmux header (atomic-rename watch, transparent backgrounds) |
+| 8. ghostty auto-reload | **Done** | Switch sends Cmd+Shift+R via osascript so the running Ghostty picks up theme.local without manual chord (requires Automation→System Events permission) |
+| 9. pi auto-switch | **Done** | Switch writes `~/.config/the-themer/pi-variant` (light/dark); the `integrations/pi-extension/` extension watches it and flips pi's theme. Also exposes `/light` `/dark` `/theme` slash commands |
 
 ## Architecture
 
@@ -138,7 +140,7 @@ the-themer/
   theme/
     theme.go          # Theme type, LoadTheme, ListThemes, AppDirs
     install.go        # Install() with per-app handlers (ghostty, bat, delta, fzf, tcm, starship, eza, gh-dash)
-    switch.go         # Switch() with per-app handlers (+ neovim via Themery)
+    switch.go         # Switch() with per-app handlers (incl. neovim via Themery, pi via variant marker, ghostty reload via osascript)
     state.go          # ReadState/WriteState for ~/.config/the-themer/current
     theme_test.go     # 15 integration tests: install, switch, state, references, titleCase
   themes/               # Theme warehouse
@@ -220,7 +222,7 @@ the-themer switch cobalt-next-neon --themes-dir ./themes/    # activate theme ac
 
 | App | Trigger | Switch Action |
 |-----|---------|---------------|
-| Ghostty | `ghostty/` dir exists | Write `~/.config/ghostty/theme.local` |
+| Ghostty | `ghostty/` dir exists | Write `~/.config/ghostty/theme.local`, then send Cmd+Shift+R via osascript so the running Ghostty reloads (best-effort, macOS-only) |
 | bat | `bat/` dir or `references.bat` | Write theme name to `~/.config/bat-theme.txt` |
 | Delta | `delta/` dir or `references.delta` | Write feature name to `~/.config/delta-theme.txt` |
 | fzf | `fzf/` dir exists | Symlink `~/.config/the-themer/fzf/current.zsh` |
@@ -229,6 +231,7 @@ the-themer switch cobalt-next-neon --themes-dir ./themes/    # activate theme ac
 | eza | `eza/` dir exists | Symlink `~/.config/eza/theme.yml` |
 | gh-dash | `gh-dash/` dir exists | Copy to `~/.config/gh-dash/config.yml` |
 | Neovim | `references.neovim` set | Headless nvim + Themery |
+| pi | `pi/` dir exists | Atomic write of `~/.config/the-themer/pi-variant` containing `light`/`dark`. The `integrations/pi-extension/` extension (symlinked into `~/.pi/agent/extensions/`) watches that file and calls `setTheme` |
 
 Active theme state recorded at `~/.config/the-themer/current`.
 

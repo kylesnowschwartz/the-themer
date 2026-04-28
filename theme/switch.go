@@ -51,6 +51,7 @@ func Switch(t Theme, opts SwitchOpts) []SwitchResult {
 		{"eza", switchEza},
 		{"gh-dash", switchGhDash},
 		{"neovim", switchNeovim},
+		{"pi", switchPi},
 	}
 
 	var results []SwitchResult
@@ -64,6 +65,43 @@ func Switch(t Theme, opts SwitchOpts) []SwitchResult {
 		results = append(results, SwitchResult{App: h.app, Message: msg, Err: err})
 	}
 	return results
+}
+
+// switchPi writes the active theme's variant ("light" or "dark") to a tiny
+// marker file at ~/.config/the-themer/pi-variant. The pi `theme-toggle`
+// extension watches that file via fs.watch and calls setTheme(variant) on
+// change, so `the-themer switch` propagates light/dark into a running pi
+// session without any direct shell→pi channel.
+//
+// Opt-in per theme: presence of a `pi/` subdir (typically containing just a
+// `.keep` file) signals "this theme participates in pi auto-switching."
+// Following the same convention as ghostty/bat/fzf/etc.
+//
+// Atomic write (write-tmp + rename) for the same reason tcm needs it: macOS
+// fs.watch on a regular file is reliably triggered by rename, less so by
+// in-place truncate.
+func switchPi(t Theme, home string) (string, error) {
+	if !dirExists(filepath.Join(t.Dir, "pi")) {
+		return "", nil
+	}
+	variant := t.Config.Theme.Variant
+	if variant != "light" && variant != "dark" {
+		return "", nil
+	}
+	dir := filepath.Join(home, ".config", "the-themer")
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return "", err
+	}
+	dest := filepath.Join(dir, "pi-variant")
+	tmp := dest + ".tmp"
+	if err := os.WriteFile(tmp, []byte(variant+"\n"), 0o644); err != nil {
+		return "", err
+	}
+	if err := os.Rename(tmp, dest); err != nil {
+		os.Remove(tmp)
+		return "", err
+	}
+	return fmt.Sprintf("pi-variant -> %s", variant), nil
 }
 
 // switchGhostty writes theme.local with the theme filename reference.
