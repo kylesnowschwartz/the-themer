@@ -242,6 +242,10 @@ Active theme state recorded at `~/.config/the-themer/current`.
 - `/Users/kyle/Code/dotfiles/.bash_aliases` -- bat()/git() theme wrappers (lines 100-121)
 - `/Users/kyle/Code/my-projects/cobalt-neon.nvim/` -- existing neovim theme (standalone plugin)
 
+### Local Theming Environment (dotfiles)
+
+Kyle's live terminal configs are symlinks into `/Users/kyle/Code/dotfiles` (home files → `~/`, config dirs → `~/.config/`), so install/switch targets like `~/.config/starship.toml` resolve into that repo's territory. The dotfiles-side switching conventions (switch-theme.sh keybindings, `starship-set`, `delta-dark`/`delta-light` aliases) are documented in `/Users/kyle/Code/dotfiles/.claude/rules/theming.md`.
+
 ## Build & Test
 
 ```bash
