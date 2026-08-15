@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A Go CLI tool and central warehouse for terminal environment theming. One repo holds all theme definitions — palettes, generated configs, hand-crafted configs, and external references. Three commands: `generate` (palette → per-app configs), `install` (deploy to filesystem), `switch` (change active theme across all apps, replacing switch-theme.sh).
+A Go CLI tool and central warehouse for terminal environment theming. One repo holds all theme definitions — palettes, generated configs, hand-crafted configs, and external references. Three commands: `generate` (palette → per-app configs), `install` (deploy to filesystem), `switch` (change active theme across all apps; `set` configures the light/dark variant defaults that `switch light|dark` resolve to).
 
 ## Development Process
 
@@ -106,6 +106,7 @@ neovim = "cobalt-neon"      # colorscheme name for Themery
 |-------|---------|--------|----------|-------|
 | cobalt-next-neon | dark | cobalt-neon (plugin repo) | chef | Primary daily driver |
 | dayfox | light | dayfox (nightfox.nvim) | chef-light | Light mode |
+| belafonte-day | light | belafonte (tuanemuy/belafonte.nvim, pinned) | chef-light | Light default (`set light`) |
 | bleu | dark | bleu | bleu | Reference only (from meta-terminal/bleu-theme) |
 
 ### Project Layout
@@ -217,6 +218,7 @@ the-themer switch cobalt-next-neon --themes-dir ./themes/    # activate theme ac
 | Starship | `~/.config/the-themer/starship/` |
 | eza | `~/.config/eza/themes/` |
 | gh-dash | `~/.config/the-themer/gh-dash/` |
+| hud (tail-claude-hud) | `~/.config/the-themer/hud/` |
 
 ### Switch Mechanisms
 
@@ -230,6 +232,7 @@ the-themer switch cobalt-next-neon --themes-dir ./themes/    # activate theme ac
 | Starship | `starship/` dir exists | Symlink `~/.config/starship.toml` |
 | eza | `eza/` dir exists | Symlink `~/.config/eza/theme.yml` |
 | gh-dash | `gh-dash/` dir exists | Copy to `~/.config/gh-dash/config.yml` |
+| hud (tail-claude-hud) | `hud/` dir exists | Copy to `~/.config/tail-claude-hud/theme-active.toml`; the statusline layers it over its resolved theme on every render tick |
 | Neovim | `references.neovim` set | Headless nvim + Themery |
 | pi | `pi/` dir exists | Atomic write of `~/.config/the-themer/pi-variant` containing `light`/`dark`. The `integrations/pi-extension/` extension (symlinked into `~/.pi/agent/extensions/`) watches that file and calls `setTheme` |
 
@@ -238,13 +241,12 @@ Active theme state recorded at `~/.config/the-themer/current`.
 ### Reference Material
 
 - `/Users/kyle/Code/meta-terminal/bleu-theme/` -- gold standard output (22 files across 17 apps)
-- `/Users/kyle/Code/dotfiles/ghostty/switch-theme.sh` -- current switching logic (to be replaced)
 - `/Users/kyle/Code/dotfiles/.bash_aliases` -- bat()/git() theme wrappers (lines 100-121)
 - `/Users/kyle/Code/my-projects/cobalt-neon.nvim/` -- existing neovim theme (standalone plugin)
 
 ### Local Theming Environment (dotfiles)
 
-Kyle's live terminal configs are symlinks into `/Users/kyle/Code/dotfiles` (home files → `~/`, config dirs → `~/.config/`), so install/switch targets like `~/.config/starship.toml` resolve into that repo's territory. The dotfiles-side switching conventions (switch-theme.sh keybindings, `starship-set`, `delta-dark`/`delta-light` aliases) are documented in `/Users/kyle/Code/dotfiles/.claude/rules/theming.md`.
+Kyle's live terminal configs are symlinks into `/Users/kyle/Code/dotfiles` (home files → `~/`, config dirs → `~/.config/`), so install/switch targets like `~/.config/starship.toml` resolve into that repo's territory. The dotfiles-side switching conventions (the `theme()` alias the Ghostty keybindings type, `starship-set`, `delta-dark`/`delta-light` aliases) are documented in `/Users/kyle/Code/dotfiles/.claude/rules/theming.md`.
 
 ## Build & Test
 
