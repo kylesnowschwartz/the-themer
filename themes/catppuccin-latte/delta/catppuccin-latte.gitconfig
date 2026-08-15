@@ -2,7 +2,7 @@
 ; Add to .gitconfig or include via [include] path = <this-file>
 [delta "catppuccin-latte"]
 	light = true
-	syntax-theme = Nord
+	syntax-theme = GitHub
 	navigate = true
 	keep-plus-minus-markers = true
 	file-decoration-style = "none"

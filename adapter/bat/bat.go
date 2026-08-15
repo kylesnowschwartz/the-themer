@@ -50,7 +50,7 @@ func titleCase(s string) string {
 //	Keyword/accent (keyword, attribute, boolean, link, import, decorator): UI.Accent
 //	String/literal (string, regexp, code): Color5
 //	Comment/dimmed (comment, quote, preprocessor): UI.Dimmed
-//	Emphasis (function, heading, bold): Color15
+//	Emphasis (function, heading, bold): Color15 (dark) / Color0 (light)
 //	Variable, parameter: FG
 //	Number/constant: Syntax.Number
 //	Invalid/diff-deleted: Syntax.Error
@@ -177,7 +177,7 @@ var batTmpl = template.Must(template.New("bat").Funcs(template.FuncMap{
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
-				<string>{{.Palette.Color15}}</string>
+				<string>{{if eq .Theme.Variant "light"}}{{.Palette.Color0}}{{else}}{{.Palette.Color15}}{{end}}</string>
 				<key>fontStyle</key>
 				<string>bold</string>
 			</dict>
@@ -311,7 +311,7 @@ var batTmpl = template.Must(template.New("bat").Funcs(template.FuncMap{
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
-				<string>{{.Palette.Color15}}</string>
+				<string>{{if eq .Theme.Variant "light"}}{{.Palette.Color0}}{{else}}{{.Palette.Color15}}{{end}}</string>
 				<key>fontStyle</key>
 				<string>bold</string>
 			</dict>
@@ -324,7 +324,7 @@ var batTmpl = template.Must(template.New("bat").Funcs(template.FuncMap{
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
-				<string>{{.Palette.Color15}}</string>
+				<string>{{if eq .Theme.Variant "light"}}{{.Palette.Color0}}{{else}}{{.Palette.Color15}}{{end}}</string>
 				<key>fontStyle</key>
 				<string>bold</string>
 			</dict>

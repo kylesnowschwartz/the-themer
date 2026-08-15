@@ -39,11 +39,11 @@ var fzfTmpl = template.Must(template.New("fzf").Parse(
 
 export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
   --color=fg:{{.Palette.FG}},bg:{{.Palette.BG}},hl:{{.Palette.UI.Accent}}
-  --color=fg+:{{.Palette.Color15}},bg+:{{.Palette.SelectionBG}},hl+:{{.Palette.UI.Accent}}
+  --color=fg+:{{if eq .Theme.Variant "light"}}{{.Palette.SelectionFG}}{{else}}{{.Palette.Color15}}{{end}},bg+:{{.Palette.SelectionBG}},hl+:{{.Palette.UI.Accent}}
   --color=info:{{.Palette.UI.Info}},prompt:{{.Palette.Color4}},pointer:{{.Palette.UI.Accent}}
   --color=marker:{{.Palette.UI.Success}},spinner:{{.Palette.Color4}},header:{{.Palette.UI.Dimmed}}
   --color=border:{{.Palette.UI.Border}},gutter:{{.Palette.BG}}
   --color=query:{{.Palette.FG}},disabled:{{.Palette.UI.Dimmed}}
-  --color=preview-fg:{{.Palette.FG}},preview-bg:{{.Palette.UI.Border}}
+  --color=preview-fg:{{.Palette.FG}},preview-bg:{{if eq .Theme.Variant "light"}}{{.Palette.BG}}{{else}}{{.Palette.UI.Border}}{{end}}
 '
 `))
