@@ -1,0 +1,27 @@
+{
+  "name": "belafonte-day",
+  "variant": "light",
+  "palette": {
+    "text": "#45373c",
+    "subtext0": "#5e5252",
+    "subtext1": "#5e5252",
+    "overlay0": "#5e5252",
+    "overlay1": "#5e5252",
+    "blue": "#426a79",
+    "lavender": "#97522c",
+    "pink": "#97522c",
+    "mauve": "#97522c",
+    "yellow": "#d08b30",
+    "green": "#858162",
+    "red": "#be100e",
+    "peach": "#d08b30",
+    "teal": "#989a9c",
+    "sky": "#989a9c",
+    "surface0": "#968c83",
+    "surface1": "#968c83",
+    "surface2": "#5e5252",
+    "base": "#d5ccba",
+    "mantle": "#d5ccba",
+    "crust": "#d5ccba"
+  }
+}

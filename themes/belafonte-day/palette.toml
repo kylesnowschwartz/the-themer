@@ -1,0 +1,38 @@
+# Belafonte Day palette
+# A warm parchment light theme with muted earth tones.
+# Upstream: https://github.com/mbadolato/iTerm2-Color-Schemes (ghostty/Belafonte Day)
+
+[theme]
+name = "belafonte-day"
+variant = "light"
+
+[palette]
+bg = "#d5ccba"
+fg = "#45373c"
+cursor = "#45373c"
+cursor_text = "#d5ccba"
+selection_bg = "#968c83"
+selection_fg = "#45373c"
+
+# ANSI 16 colors (normal)
+color0 = "#20111b"   # black (dark plum)
+color1 = "#be100e"   # red (brick)
+color2 = "#858162"   # green (olive)
+color3 = "#d08b30"   # yellow (ochre)
+color4 = "#426a79"   # blue (slate)
+color5 = "#97522c"   # magenta (sienna)
+color6 = "#989a9c"   # cyan (grey)
+color7 = "#968c83"   # white (warm grey)
+
+# ANSI 16 colors (bright) — upstream port mirrors the normal row
+color8 = "#5e5252"   # bright black
+color9 = "#be100e"   # bright red
+color10 = "#858162"  # bright green
+color11 = "#d08b30"  # bright yellow
+color12 = "#426a79"  # bright blue
+color13 = "#97522c"  # bright magenta
+color14 = "#989a9c"  # bright cyan
+color15 = "#d5ccba"  # bright white (parchment)
+
+[references]
+neovim = "belafonte"

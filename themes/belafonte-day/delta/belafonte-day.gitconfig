@@ -1,0 +1,22 @@
+; belafonte-day theme for delta
+; Add to .gitconfig or include via [include] path = <this-file>
+[delta "belafonte-day"]
+	light = true
+	syntax-theme = GitHub
+	navigate = true
+	keep-plus-minus-markers = true
+	file-decoration-style = "none"
+	file-style = "#426a79 bold"
+	minus-style = "#be100e"
+	minus-emph-style = "#be100e bold"
+	plus-style = "#858162"
+	plus-emph-style = "#858162 bold"
+	hunk-header-style = "#989a9c bold"
+	line-numbers = true
+	line-numbers-minus-style = "#be100e"
+	line-numbers-plus-style = "#858162"
+	line-numbers-left-style = "#5e5252"
+	line-numbers-right-style = "#5e5252"
+	line-numbers-zero-style = "#5e5252"
+	zero-style = "syntax"
+	whitespace-error-style = "reverse #97522c"
