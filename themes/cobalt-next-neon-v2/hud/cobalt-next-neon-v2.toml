@@ -1,0 +1,41 @@
+# cobalt-next-neon-v2 theme for tail-claude-hud
+# Deployed by the-themer to ~/.config/tail-claude-hud/theme-active.toml
+
+[model]
+fg = "#5fced8"
+
+[context]
+fg = "#8ff586"
+
+[directory]
+fg = "#3ba5ff"
+
+[git]
+fg = "#5fced8"
+
+[project]
+fg = "#3ba5ff"
+
+[env]
+fg = "#cf8de8"
+
+[duration]
+fg = "#6a8098"
+
+[tools]
+fg = "#3ba5ff"
+
+[agents]
+fg = "#8ff586"
+
+[todos]
+fg = "#e9e75c"
+
+[session]
+fg = "#5fced8"
+
+[thinking]
+fg = "#e9e75c"
+
+[cost]
+fg = "#5fced8"

@@ -1,0 +1,41 @@
+# tekapo-sunset-dark theme for tail-claude-hud
+# Deployed by the-themer to ~/.config/tail-claude-hud/theme-active.toml
+
+[model]
+fg = "#5f8d95"
+
+[context]
+fg = "#6d8962"
+
+[directory]
+fg = "#5c84b2"
+
+[git]
+fg = "#5f8d95"
+
+[project]
+fg = "#5c84b2"
+
+[env]
+fg = "#a37487"
+
+[duration]
+fg = "#758298"
+
+[tools]
+fg = "#5c84b2"
+
+[agents]
+fg = "#6d8962"
+
+[todos]
+fg = "#c49b49"
+
+[session]
+fg = "#5f8d95"
+
+[thinking]
+fg = "#c49b49"
+
+[cost]
+fg = "#5f8d95"

@@ -1,0 +1,41 @@
+# tekapo-sunset-light theme for tail-claude-hud
+# Deployed by the-themer to ~/.config/tail-claude-hud/theme-active.toml
+
+[model]
+fg = "#426c74"
+
+[context]
+fg = "#556c4b"
+
+[directory]
+fg = "#416895"
+
+[git]
+fg = "#426c74"
+
+[project]
+fg = "#416895"
+
+[env]
+fg = "#87586b"
+
+[duration]
+fg = "#5c687b"
+
+[tools]
+fg = "#416895"
+
+[agents]
+fg = "#556c4b"
+
+[todos]
+fg = "#9c7826"
+
+[session]
+fg = "#426c74"
+
+[thinking]
+fg = "#9c7826"
+
+[cost]
+fg = "#426c74"

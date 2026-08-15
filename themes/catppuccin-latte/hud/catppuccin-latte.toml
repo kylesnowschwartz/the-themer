@@ -1,0 +1,41 @@
+# catppuccin-latte theme for tail-claude-hud
+# Deployed by the-themer to ~/.config/tail-claude-hud/theme-active.toml
+
+[model]
+fg = "#1e66f5"
+
+[context]
+fg = "#40a02b"
+
+[directory]
+fg = "#1e66f5"
+
+[git]
+fg = "#179299"
+
+[project]
+fg = "#1e66f5"
+
+[env]
+fg = "#ea76cb"
+
+[duration]
+fg = "#6c6f85"
+
+[tools]
+fg = "#1e66f5"
+
+[agents]
+fg = "#40a02b"
+
+[todos]
+fg = "#df8e1d"
+
+[session]
+fg = "#179299"
+
+[thinking]
+fg = "#df8e1d"
+
+[cost]
+fg = "#179299"

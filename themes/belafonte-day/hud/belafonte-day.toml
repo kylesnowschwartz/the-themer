@@ -1,0 +1,41 @@
+# belafonte-day theme for tail-claude-hud
+# Deployed by the-themer to ~/.config/tail-claude-hud/theme-active.toml
+
+[model]
+fg = "#989a9c"
+
+[context]
+fg = "#858162"
+
+[directory]
+fg = "#426a79"
+
+[git]
+fg = "#989a9c"
+
+[project]
+fg = "#426a79"
+
+[env]
+fg = "#97522c"
+
+[duration]
+fg = "#5e5252"
+
+[tools]
+fg = "#426a79"
+
+[agents]
+fg = "#858162"
+
+[todos]
+fg = "#d08b30"
+
+[session]
+fg = "#989a9c"
+
+[thinking]
+fg = "#d08b30"
+
+[cost]
+fg = "#989a9c"

@@ -1,0 +1,41 @@
+# dayfox theme for tail-claude-hud
+# Deployed by the-themer to ~/.config/tail-claude-hud/theme-active.toml
+
+[model]
+fg = "#287980"
+
+[context]
+fg = "#396847"
+
+[directory]
+fg = "#2848a9"
+
+[git]
+fg = "#287980"
+
+[project]
+fg = "#2848a9"
+
+[env]
+fg = "#6e33ce"
+
+[duration]
+fg = "#534c45"
+
+[tools]
+fg = "#2848a9"
+
+[agents]
+fg = "#396847"
+
+[todos]
+fg = "#ac5402"
+
+[session]
+fg = "#287980"
+
+[thinking]
+fg = "#ac5402"
+
+[cost]
+fg = "#287980"

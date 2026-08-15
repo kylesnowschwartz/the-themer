@@ -50,6 +50,7 @@ func Switch(t Theme, opts SwitchOpts) []SwitchResult {
 		{"starship", switchStarship},
 		{"eza", switchEza},
 		{"gh-dash", switchGhDash},
+		{"hud", switchHud},
 		{"neovim", switchNeovim},
 		{"pi", switchPi},
 	}
@@ -382,6 +383,32 @@ func switchGhDash(t Theme, home string) (string, error) {
 		return "", err
 	}
 	return fmt.Sprintf("gh-dash/config.yml -> %s", srcFile), nil
+}
+
+// switchHud copies the installed widget-color TOML to
+// ~/.config/tail-claude-hud/theme-active.toml, which the statusline layers
+// over its resolved theme on every render tick (no reload signal needed).
+func switchHud(t Theme, home string) (string, error) {
+	hudDir := filepath.Join(t.Dir, "hud")
+	if !dirExists(hudDir) {
+		return "", nil
+	}
+
+	srcFile, err := firstFile(hudDir)
+	if err != nil || srcFile == "" {
+		return "", err
+	}
+
+	src := filepath.Join(home, ".config", "the-themer", "hud", srcFile)
+	dest := filepath.Join(home, ".config", "tail-claude-hud", "theme-active.toml")
+
+	if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
+		return "", err
+	}
+	if err := copyFile(src, dest); err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("tail-claude-hud/theme-active.toml -> %s", srcFile), nil
 }
 
 // switchNeovim uses headless nvim to set the colorscheme via Themery.

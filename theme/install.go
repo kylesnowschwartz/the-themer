@@ -52,6 +52,7 @@ func Install(t Theme, opts InstallOpts) []InstallResult {
 		{"starship", installStarship},
 		{"eza", installEza},
 		{"gh-dash", installGhDash},
+		{"hud", installHud},
 	}
 
 	var results []InstallResult
@@ -196,6 +197,13 @@ func installStarship(t Theme, home string) (string, error) {
 func installEza(t Theme, home string) (string, error) {
 	srcDir := filepath.Join(t.Dir, "eza")
 	destDir := filepath.Join(home, ".config", "eza", "themes")
+	return copyDirContents(srcDir, destDir)
+}
+
+// installHud copies the tail-claude-hud widget-color TOML to ~/.config/the-themer/hud/.
+func installHud(t Theme, home string) (string, error) {
+	srcDir := filepath.Join(t.Dir, "hud")
+	destDir := filepath.Join(home, ".config", "the-themer", "hud")
 	return copyDirContents(srcDir, destDir)
 }
 

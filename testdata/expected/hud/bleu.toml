@@ -1,0 +1,41 @@
+# bleu theme for tail-claude-hud
+# Deployed by the-themer to ~/.config/tail-claude-hud/theme-active.toml
+
+[model]
+fg = "#00d4ff"
+
+[context]
+fg = "#99FFE4"
+
+[directory]
+fg = "#5588cc"
+
+[git]
+fg = "#6bb6d6"
+
+[project]
+fg = "#5588cc"
+
+[env]
+fg = "#87ceeb"
+
+[duration]
+fg = "#708090"
+
+[tools]
+fg = "#5588cc"
+
+[agents]
+fg = "#99FFE4"
+
+[todos]
+fg = "#FDBD85"
+
+[session]
+fg = "#6bb6d6"
+
+[thinking]
+fg = "#FDBD85"
+
+[cost]
+fg = "#6bb6d6"
