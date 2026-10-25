@@ -238,6 +238,8 @@ the-themer switch cobalt-next-neon --themes-dir ./themes/    # activate theme ac
 
 Active theme state recorded at `~/.config/the-themer/current`.
 
+The fzf, tcm, starship, eza, gh-dash, and hud handlers read the *installed* copy, not the repo file. When that copy is missing they fail with a `run the-themer install <theme>` hint and leave the previous link or copy untouched. Adding a new app dir to existing themes therefore needs `install` re-run for each theme before `switch` works.
+
 ### Reference Material
 
 - `/Users/kyle/Code/meta-terminal/bleu-theme/` -- gold standard output (22 files across 17 apps)

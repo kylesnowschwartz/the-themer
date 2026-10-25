@@ -1,7 +1,9 @@
 package theme
 
 import (
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -260,6 +262,9 @@ func switchFzf(t Theme, home string) (string, error) {
 	installedDir := filepath.Join(home, ".config", "the-themer", "fzf")
 	installedFile := filepath.Join(installedDir, srcFile)
 	link := filepath.Join(installedDir, "current.zsh")
+	if err := requireInstalled(t, installedFile); err != nil {
+		return "", err
+	}
 
 	// Remove existing symlink before creating new one.
 	os.Remove(link)
@@ -291,6 +296,9 @@ func switchTCM(t Theme, home string) (string, error) {
 	installedFile := filepath.Join(home, ".config", "tcm", srcFile)
 	dest := filepath.Join(home, ".config", "tcm", "active-theme.json")
 	tmp := dest + ".tmp"
+	if err := requireInstalled(t, installedFile); err != nil {
+		return "", err
+	}
 
 	if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
 		return "", err
@@ -328,6 +336,9 @@ func switchStarship(t Theme, home string) (string, error) {
 
 	installedFile := filepath.Join(home, ".config", "the-themer", "starship", srcFile)
 	link := filepath.Join(home, ".config", "starship.toml")
+	if err := requireInstalled(t, installedFile); err != nil {
+		return "", err
+	}
 
 	os.Remove(link)
 	if err := os.Symlink(installedFile, link); err != nil {
@@ -350,6 +361,9 @@ func switchEza(t Theme, home string) (string, error) {
 
 	installedFile := filepath.Join(home, ".config", "eza", "themes", srcFile)
 	link := filepath.Join(home, ".config", "eza", "theme.yml")
+	if err := requireInstalled(t, installedFile); err != nil {
+		return "", err
+	}
 
 	if err := os.MkdirAll(filepath.Dir(link), 0o755); err != nil {
 		return "", err
@@ -375,6 +389,9 @@ func switchGhDash(t Theme, home string) (string, error) {
 
 	src := filepath.Join(home, ".config", "the-themer", "gh-dash", srcFile)
 	dest := filepath.Join(home, ".config", "gh-dash", "config.yml")
+	if err := requireInstalled(t, src); err != nil {
+		return "", err
+	}
 
 	if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
 		return "", err
@@ -401,6 +418,9 @@ func switchHud(t Theme, home string) (string, error) {
 
 	src := filepath.Join(home, ".config", "the-themer", "hud", srcFile)
 	dest := filepath.Join(home, ".config", "tail-claude-hud", "theme-active.toml")
+	if err := requireInstalled(t, src); err != nil {
+		return "", err
+	}
 
 	if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
 		return "", err
@@ -443,6 +463,17 @@ func firstFile(dir string) (string, error) {
 		}
 	}
 	return "", nil
+}
+
+// requireInstalled reports a missing installed file with the install command
+// that deploys it. Handlers call it before touching the active config, so a
+// missing install leaves the previous theme's link or copy in place.
+func requireInstalled(t Theme, path string) error {
+	_, err := os.Stat(path)
+	if errors.Is(err, fs.ErrNotExist) {
+		return fmt.Errorf("%s is not installed; run `the-themer install %s`", path, t.Name)
+	}
+	return err
 }
 
 // dirExists returns true if path exists and is a directory.

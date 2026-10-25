@@ -453,3 +453,43 @@ func checkNoErrors(t *testing.T, results []SwitchResult) {
 		}
 	}
 }
+
+func TestSwitch_NotInstalled_ReportsInstallCommand(t *testing.T) {
+	themesDir, themeDir := setupThemeDir(t, []string{"hud", "starship"}, minimalPaletteTOML)
+	writeFile(t, filepath.Join(themeDir, "hud", "test-theme.toml"), "hud content")
+	writeFile(t, filepath.Join(themeDir, "starship", "chef-starship.toml"), "starship content")
+
+	home := t.TempDir()
+	link := filepath.Join(home, ".config", "starship.toml")
+	writeFile(t, filepath.Join(home, ".config", "previous.toml"), "previous")
+	if err := os.Symlink(filepath.Join(home, ".config", "previous.toml"), link); err != nil {
+		t.Fatal(err)
+	}
+
+	th, err := LoadTheme(themesDir, "test-theme")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	results := Switch(th, SwitchOpts{HomeDir: home})
+	for _, app := range []string{"hud", "starship"} {
+		var found bool
+		for _, r := range results {
+			if r.App != app {
+				continue
+			}
+			found = true
+			if r.Err == nil || !strings.Contains(r.Err.Error(), "run `the-themer install test-theme`") {
+				t.Errorf("%s: err = %v, want install hint", app, r.Err)
+			}
+		}
+		if !found {
+			t.Errorf("no result for %s", app)
+		}
+	}
+
+	target, err := os.Readlink(link)
+	if err != nil || !strings.HasSuffix(target, "previous.toml") {
+		t.Errorf("starship link = %q (%v), want previous link kept", target, err)
+	}
+}
